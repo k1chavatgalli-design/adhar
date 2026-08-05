@@ -1,0 +1,2112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sagar Boss — Admin & Retailer Portal</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+      :root {
+        --bg-color: #050806;
+        --card-bg: rgba(10, 18, 14, 0.9);
+        --primary-green: #00ff66;
+        --dim-green: #00b347;
+        --dark-green: #003314;
+        --blood-red: #ff0033;
+        --cyan-glitch: #00ffff;
+        --warning-yellow: #ffcc00;
+        --text-color: #00ff66;
+        --border-color: #00ff66;
+        --font-mono: 'Fira Code', monospace;
+        --error-red: #ff3333;
+        --paytm-blue: #00baf2;
+        --paytm-dark: #002e6e;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-mono);
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Scanline Overlay */
+      body::before {
+        content: " "; display: block; position: fixed;
+        top: 0; left: 0; bottom: 0; right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+        background-size: 100% 4px; z-index: 9999;
+        pointer-events: none; opacity: 0.7;
+      }
+
+      a { text-decoration: none; color: var(--primary-green); transition: all 0.2s ease; }
+      a:hover { color: #ffffff; text-shadow: 0 0 8px var(--primary-green); }
+
+      /* --- WELCOME OVERLAY --- */
+      #welcome-screen {
+        display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background-color: #000000; z-index: 99999;
+        flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+      }
+
+      .welcome-card {
+        border: 2px solid var(--primary-green); padding: 40px 30px;
+        background: rgba(0, 20, 10, 0.95); box-shadow: 0 0 35px var(--primary-green);
+        max-width: 600px; width: 90%; animation: pulse-welcome 2s infinite alternate;
+      }
+
+      @keyframes pulse-welcome {
+        0% { box-shadow: 0 0 20px var(--primary-green); }
+        100% { box-shadow: 0 0 45px var(--cyan-glitch); }
+      }
+
+      .welcome-title {
+        font-family: 'VT323', monospace; font-size: 3.2rem; color: var(--primary-green);
+        text-shadow: 0 0 15px var(--primary-green); margin-bottom: 15px; letter-spacing: 2px;
+      }
+
+      .welcome-subtitle {
+        color: var(--cyan-glitch); font-size: 15px; margin-bottom: 10px;
+        text-transform: uppercase; letter-spacing: 1px;
+      }
+
+      /* --- COMMON DASHBOARD STYLES --- */
+      .dashboard-view {
+        display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background-color: var(--bg-color); z-index: 100000; padding: 20px; overflow-y: auto;
+      }
+
+      .dashboard-header {
+        display: flex; justify-content: space-between; align-items: center;
+        border-bottom: 2px solid var(--primary-green); padding-bottom: 15px; margin-bottom: 25px;
+      }
+
+      .dash-panel {
+        background: rgba(0, 20, 10, 0.85); border: 1px solid var(--primary-green);
+        box-shadow: 0 0 15px rgba(0, 255, 102, 0.15); padding: 20px; border-radius: 4px;
+      }
+
+      .panel-title {
+        font-family: 'VT323', monospace; font-size: 1.8rem; color: var(--primary-green);
+        border-bottom: 1px dashed var(--dark-green); padding-bottom: 8px; margin-bottom: 15px;
+        display: flex; align-items: center; gap: 10px;
+      }
+
+      /* --- RETAILER DASHBOARD LAYOUT --- */
+      .retailer-grid { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+      
+      .services-list { display: flex; flex-direction: column; gap: 10px; }
+      .service-item {
+        background: #000; border: 1px solid var(--dark-green); padding: 12px;
+        display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;
+      }
+      .service-item:hover { border-color: var(--primary-green); box-shadow: 0 0 10px var(--primary-green); transform: translateX(4px); }
+
+      .balance-card {
+        background: #000; border: 2px solid var(--cyan-glitch);
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.2); padding: 25px; text-align: center; margin-bottom: 20px;
+      }
+      .balance-amount {
+        font-family: 'VT323', monospace; font-size: 3.5rem; color: var(--primary-green);
+        text-shadow: 0 0 15px var(--primary-green); margin: 10px 0;
+      }
+
+      .profile-info { display: flex; flex-direction: column; gap: 12px; font-size: 14px; }
+      .profile-field { background: #000; padding: 10px; border: 1px solid var(--dark-green); }
+      .profile-label { color: var(--dim-green); font-size: 11px; text-transform: uppercase; }
+
+      /* --- SUB SERVICES GRID STYLES --- */
+      .sub-services-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+        max-width: 1200px; margin: 30px auto;
+      }
+      .sub-service-card {
+        background: rgba(0, 20, 10, 0.95); border: 2px solid var(--primary-green);
+        box-shadow: 0 0 20px rgba(0, 255, 102, 0.2); padding: 30px 20px;
+        text-align: center; border-radius: 6px; cursor: pointer; transition: all 0.3s;
+      }
+      .sub-service-card:hover {
+        transform: translateY(-5px); border-color: var(--cyan-glitch);
+        box-shadow: 0 0 30px var(--cyan-glitch);
+      }
+      .sub-service-icon { font-size: 3rem; color: var(--cyan-glitch); margin-bottom: 15px; }
+      .sub-service-title { font-family: 'VT323', monospace; font-size: 2rem; color: var(--primary-green); margin-bottom: 10px; }
+      .sub-service-desc { font-size: 12px; color: var(--dim-green); margin-bottom: 20px; line-height: 1.5; }
+
+      /* --- FORM & CARD PREVIEW STYLES --- */
+      .form-container-box {
+        max-width: 650px; margin: 20px auto; background: rgba(0, 20, 10, 0.95);
+        border: 2px solid var(--primary-green); box-shadow: 0 0 25px rgba(0,255,102,0.2);
+        padding: 30px; border-radius: 6px; text-align: left;
+      }
+      .form-row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+      /* --- CARD PREVIEW STYLES --- */
+      .aadhaar-card-preview {
+        width: 420px; height: 260px; background: #fff; color: #000;
+        border-radius: 8px; border: 2px solid #333; padding: 12px; box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        font-family: sans-serif; position: relative; margin: 20px auto; display: flex; flex-direction: column; justify-content: space-between; text-align: left;
+      }
+      .card-header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
+      .card-header-title { font-size: 11px; font-weight: bold; color: #c0392b; display: flex; align-items: center; gap: 5px; }
+      .card-body-layout { display: flex; gap: 12px; margin-top: 8px; align-items: flex-start; }
+      .card-photo-frame { width: 75px; height: 95px; border: 1px solid #999; object-fit: cover; background: #eee; }
+      .card-info-details { flex: 1; font-size: 11px; line-height: 1.4; color: #2c3e50; }
+      .card-number-bold { font-size: 16px; font-weight: bold; letter-spacing: 2px; color: #c0392b; text-align: center; border-top: 1px dashed #ccc; padding-top: 6px; font-family: monospace; }
+      
+      /* --- FLOATING ROBOT BUTTON & TICKET MODAL STYLES --- */
+      .floating-robot {
+        position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px;
+        background: var(--dark-green); border: 2px solid var(--primary-green);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 28px; color: var(--primary-green); box-shadow: 0 0 20px var(--primary-green);
+        cursor: pointer; z-index: 100001; transition: all 0.3s ease; animation: robot-bounce 2s infinite alternate;
+      }
+      .floating-robot:hover {
+        transform: scale(1.15) rotate(10deg); background: var(--primary-green); color: #000;
+        box-shadow: 0 0 30px var(--cyan-glitch);
+      }
+      @keyframes robot-bounce {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-8px); }
+      }
+
+      #robot-modal-overlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 10, 5, 0.88); z-index: 200000; backdrop-filter: blur(6px);
+        align-items: center; justify-content: center; padding: 20px;
+      }
+      .robot-modal {
+        background: rgba(0, 25, 12, 0.95); border: 2px solid var(--cyan-glitch);
+        box-shadow: 0 0 35px rgba(0, 255, 255, 0.3); border-radius: 8px;
+        width: 100%; max-width: 500px; padding: 25px; font-family: var(--font-mono);
+      }
+      .robot-header {
+        display: flex; align-items: center; justify-content: space-between;
+        border-bottom: 1px dashed var(--cyan-glitch); padding-bottom: 12px; margin-bottom: 20px;
+      }
+      .robot-title {
+        font-family: 'VT323', monospace; font-size: 2.2rem; color: var(--cyan-glitch);
+        display: flex; align-items: center; gap: 10px;
+      }
+
+      /* --- STANDALONE PAYMENT PAGE VIEW --- */
+      .payment-page-container {
+        max-width: 800px; margin: 0 auto;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;
+      }
+      .pay-card {
+        background: rgba(0, 20, 10, 0.95); border: 2px solid var(--paytm-blue);
+        box-shadow: 0 0 30px rgba(0, 186, 242, 0.25); border-radius: 6px; padding: 25px; text-align: center;
+      }
+      .paytm-qr-display {
+        background: #ffffff; padding: 15px; border-radius: 8px; display: inline-block;
+        box-shadow: 0 0 20px rgba(0, 186, 242, 0.4); margin: 15px 0; border: 2px solid var(--paytm-blue);
+      }
+      .paytm-qr-display img { width: 180px; height: 180px; display: block; }
+
+      .pay-input-group { margin-bottom: 15px; text-align: left; }
+      .pay-input-group label { display: block; font-size: 11px; color: var(--paytm-blue); text-transform: uppercase; margin-bottom: 6px; }
+      .pay-input-group input {
+        width: 100%; padding: 10px; background: #000; border: 1px solid var(--paytm-blue);
+        color: #fff; font-family: var(--font-mono); font-size: 14px; outline: none; border-radius: 4px;
+      }
+      .pay-input-group input:focus { border-color: var(--primary-green); box-shadow: 0 0 8px var(--paytm-blue); }
+
+      .quick-amt-btns { display: flex; gap: 8px; margin-top: 8px; }
+      .btn-amt {
+        flex: 1; padding: 6px; background: #000; border: 1px solid var(--dark-green);
+        color: var(--primary-green); font-family: var(--font-mono); font-size: 11px; cursor: pointer; transition: all 0.2s;
+      }
+      .btn-amt:hover { border-color: var(--paytm-blue); color: #fff; }
+
+      .btn-paytm-submit {
+        background: var(--paytm-blue); color: #000; font-weight: bold; border: none;
+        padding: 14px; width: 100%; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+        font-family: var(--font-mono); font-size: 15px; text-transform: uppercase; margin-top: 10px;
+      }
+      .btn-paytm-submit:hover { background: #52d2ff; box-shadow: 0 0 20px var(--paytm-blue); }
+
+      /* --- ADMIN PANEL LAYOUT --- */
+      .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+      
+      .admin-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+      .admin-table th, .admin-table td { padding: 10px; border: 1px solid var(--dark-green); text-align: left; }
+      .admin-table th { background: #00220d; color: var(--cyan-glitch); }
+      .admin-table tr:hover { background: rgba(0, 255, 102, 0.05); }
+
+      .admin-form-group { margin-bottom: 12px; }
+      .admin-form-group label { display: block; font-size: 11px; color: var(--dim-green); text-transform: uppercase; margin-bottom: 4px; }
+      .admin-form-group input, .admin-form-group select, .admin-form-group textarea {
+        width: 100%; padding: 8px; background: #000; border: 1px solid var(--dark-green);
+        color: var(--primary-green); font-family: var(--font-mono); outline: none;
+      }
+      .admin-form-group input:focus, .admin-form-group select:focus, .admin-form-group textarea:focus { border-color: var(--primary-green); }
+
+      /* PRINT PRESERVE MEDIA */
+      @media print {
+        body * { visibility: hidden; }
+        #printable-card-area, #printable-card-area * { visibility: visible; }
+        #printable-card-area { position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; align-items: center; }
+      }
+
+      /* GLITCH & ANIMATION */
+      body.glitching { animation: intense-site-glitch 0.15s infinite alternate; }
+      @keyframes intense-site-glitch {
+        0% { transform: translate(0, 0) skew(0deg); }
+        20% { transform: translate(-10px, 5px) skew(-4deg); filter: drop-shadow(8px -4px var(--blood-red)) invert(0.15); }
+        40% { transform: translate(12px, -6px) skew(5deg); filter: contrast(220%); }
+        60% { transform: translate(-8px, -3px) skew(-3deg); filter: hue-rotate(180deg); }
+        80% { transform: translate(9px, 7px) skew(3deg); filter: drop-shadow(-6px 6px var(--blood-red)); }
+        100% { transform: translate(-3px, 1px) skew(0deg); }
+      }
+
+      body.shake { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97) both !important; }
+      @keyframes screen-shake {
+        10%, 90% { transform: translate3d(-3px, 0, 0); }
+        20%, 80% { transform: translate3d(5px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+        40%, 60% { transform: translate3d(8px, 0, 0); }
+      }
+
+      /* Matrix Background Canvas */
+      #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; opacity: 0.35; }
+
+      /* Ticker Bar */
+      .hacker-ticker-bar {
+        background-color: #030504; border-bottom: 1px solid var(--blood-red);
+        overflow: hidden; white-space: nowrap; font-size: 12px; padding: 6px 0;
+        color: var(--primary-green); box-shadow: 0 0 8px var(--blood-red);
+      }
+      .ticker-track { display: inline-block; animation: ticker-slide 22s linear infinite; }
+      .ticker-track span { margin-right: 30px; }
+      .ticker-alert { color: var(--blood-red); font-weight: bold; text-shadow: 0 0 6px var(--blood-red); }
+      @keyframes ticker-slide { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+
+      /* Header Nav */
+      header {
+        background-color: rgba(5, 8, 6, 0.95); padding: 15px 5%; display: flex;
+        justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 0 10px rgba(0, 255, 102, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(5px);
+      }
+
+      .logo-placeholder {
+        padding: 8px 18px; border: 2px solid var(--border-color); background: var(--dark-green);
+        color: var(--primary-green); font-family: 'VT323', monospace; font-size: 2.2rem;
+        font-weight: bold; letter-spacing: 3px; box-shadow: 0 0 15px var(--primary-green); text-shadow: 0 0 8px var(--primary-green);
+      }
+
+      .action-buttons { display: flex; gap: 12px; align-items: center; }
+
+      .btn {
+        padding: 8px 16px; background: transparent; color: var(--primary-green);
+        border: 1px solid var(--border-color); cursor: pointer; font-family: var(--font-mono);
+        font-size: 13px; text-transform: uppercase; transition: all 0.3s;
+      }
+      .btn:hover, .btn.active-btn { background-color: var(--primary-green); color: #000; box-shadow: 0 0 10px var(--primary-green); }
+      .btn-danger { border-color: var(--blood-red); color: var(--blood-red); }
+      .btn-danger:hover { background-color: var(--blood-red); color: #fff; box-shadow: 0 0 10px var(--blood-red); }
+      .btn-sm { padding: 4px 8px; font-size: 11px; }
+
+      /* Hero Section */
+      .hero { padding: 40px 5%; text-align: center; }
+      .terminal-header {
+        font-family: 'VT323', monospace; font-size: 6.5rem; font-weight: 900;
+        color: var(--primary-green); text-shadow: 0 0 25px var(--primary-green), 0 0 10px var(--cyan-glitch);
+        letter-spacing: 8px; text-transform: uppercase; line-height: 1;
+      }
+      .hero p.tagline { color: var(--dim-green); text-transform: uppercase; letter-spacing: 3px; font-size: 16px; margin-top: 10px; }
+
+      /* Running Man Container */
+      #running-man-container {
+        display: none; position: relative; max-width: 600px; margin: 20px auto; padding: 15px;
+        background: #000; border: 1px dashed var(--blood-red); overflow: hidden; text-align: left; box-shadow: 0 0 15px var(--blood-red);
+      }
+      .runner-status { font-size: 12px; color: var(--cyan-glitch); margin-bottom: 10px; text-transform: uppercase; text-align: center; }
+      .runner-track {
+        position: relative; height: 80px; width: 100%;
+        background: linear-gradient(to right, rgba(0,255,102,0.05), rgba(0,255,255,0.1)); border-bottom: 2px solid var(--primary-green);
+      }
+      .runner-man { position: absolute; bottom: 5px; left: -100px; font-family: monospace; white-space: pre; font-size: 11px; line-height: 1; color: var(--primary-green); text-shadow: 0 0 5px var(--primary-green); }
+      .runner-destination { position: absolute; right: 10px; bottom: 5px; font-size: 28px; color: var(--blood-red); animation: pulse-page 0.5s infinite alternate; }
+
+      @keyframes pulse-page {
+        0% { transform: scale(1); filter: drop-shadow(0 0 2px var(--blood-red)); }
+        100% { transform: scale(1.2); filter: drop-shadow(0 0 10px var(--cyan-glitch)); }
+      }
+
+      /* Door Access Container */
+      #door-section {
+        display: none; max-width: 500px; margin: 30px auto; background: #000;
+        border: 2px solid var(--primary-green); padding: 30px; box-shadow: 0 0 25px var(--primary-green); text-align: center;
+      }
+      .door-frame {
+        width: 160px; height: 240px; border: 4px solid var(--primary-green); margin: 20px auto;
+        position: relative; background: #021207; box-shadow: inset 0 0 20px var(--primary-green);
+        perspective: 800px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .door-frame:hover { transform: scale(1.03); box-shadow: inset 0 0 25px var(--cyan-glitch), 0 0 15px var(--primary-green); }
+      .door-panel {
+        width: 100%; height: 100%; background: #003314; border: 2px solid var(--primary-green);
+        transform-origin: left; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; box-shadow: 0 0 10px rgba(0,255,102,0.5);
+      }
+      .door-knob { width: 16px; height: 16px; background: var(--cyan-glitch); border-radius: 50%; box-shadow: 0 0 8px var(--cyan-glitch); }
+      .door-frame.open .door-panel { transform: rotateY(-110deg); }
+
+      /* Investigation Overlay */
+      #investigation-overlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(10, 0, 3, 0.95); z-index: 5000; backdrop-filter: blur(10px);
+        align-items: center; justify-content: center; padding: 20px;
+      }
+      .investigation-box {
+        max-width: 550px; width: 100%; background: #0d0004; border: 2px solid var(--blood-red);
+        padding: 25px; box-shadow: 0 0 30px var(--blood-red); text-align: left; position: relative; animation: pulse-border 1s infinite alternate;
+      }
+      @keyframes pulse-border {
+        0% { border-color: var(--blood-red); box-shadow: 0 0 15px var(--blood-red); }
+        100% { border-color: #ff5500; box-shadow: 0 0 35px #ff5500; }
+      }
+      .investigation-title {
+        font-family: 'VT323', monospace; font-size: 2.2rem; color: var(--blood-red);
+        border-bottom: 1px dashed var(--blood-red); padding-bottom: 8px; margin-bottom: 15px;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .investigation-body { font-size: 13px; color: #ffcccc; margin-bottom: 20px; line-height: 1.7; }
+      .investigation-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+      /* Auth Form Boxes */
+      .auth-section {
+        max-width: 480px; margin: 30px auto; background: var(--card-bg);
+        border: 1px solid var(--border-color); padding: 25px; box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+        text-align: left; display: none; backdrop-filter: blur(8px);
+      }
+      .auth-section.active { display: block; }
+      .auth-header { font-family: 'VT323', monospace; font-size: 2rem; border-bottom: 1px dashed var(--dark-green); padding-bottom: 10px; margin-bottom: 20px; color: var(--primary-green); }
+      .form-group { margin-bottom: 16px; }
+      .form-group label { display: block; font-size: 12px; margin-bottom: 6px; color: var(--dim-green); text-transform: uppercase; }
+      .form-group input { width: 100%; padding: 10px; background: #000000; border: 1px solid var(--dark-green); color: var(--primary-green); font-family: var(--font-mono); font-size: 14px; outline: none; transition: border-color 0.3s; }
+      .form-group input:focus { border-color: var(--primary-green); box-shadow: 0 0 5px var(--primary-green); }
+      .form-extra-actions { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-top: 10px; }
+      .auth-msg { margin-top: 15px; font-size: 13px; min-height: 20px; }
+      .msg-success { color: var(--primary-green); }
+      .msg-error { color: var(--error-red); }
+
+      .main-services-intro { padding: 50px 5%; text-align: center; border-top: 1px dashed var(--dark-green); }
+      .main-services-intro h2 { font-size: 2.5rem; color: var(--primary-green); text-shadow: 0 0 8px var(--primary-green); }
+
+      @media (max-width: 992px) {
+        header { flex-direction: column; gap: 15px; }
+        .terminal-header { font-size: 4rem; letter-spacing: 4px; }
+        .retailer-grid, .admin-grid, .payment-page-container, .sub-services-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- WELCOME SCREEN OVERLAY -->
+    <div id="welcome-screen">
+      <div class="welcome-card">
+        <h1 class="welcome-title" id="welcome-title-text">WELCOME TO OUR FAMILY</h1>
+        <p class="welcome-subtitle" id="welcome-sub-text">&gt; ACCESS GRANTED. REDIRECTING IN 2 SECONDS... &lt;</p>
+      </div>
+    </div>
+
+    <!-- RETAILER DASHBOARD HOMEPAGE -->
+    <div id="homepage-dashboard" class="dashboard-view">
+      <div class="dashboard-header">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.5rem; color:var(--primary-green);">&gt;_ SAGAR_BOSS RETAILER PORTAL</h1>
+        <button class="btn" onclick="logoutToLanding()"><i class="fas fa-power-off"></i> LOGOUT</button>
+      </div>
+
+      <div class="retailer-grid">
+        <!-- LEFT: SERVICES & CHARGES -->
+        <div class="dash-panel">
+          <div class="panel-title"><i class="fas fa-concierge-bell"></i> ACTIVE SERVICES &amp; CHARGES</div>
+          <div class="services-list" id="retailer-services-list">
+            <!-- Dynamically populated from charges -->
+          </div>
+        </div>
+
+        <!-- MIDDLE: RETAILER WALLET -->
+        <div class="dash-panel" style="text-align: center;">
+          <div class="panel-title" style="justify-content: center;"><i class="fas fa-wallet"></i> RETAILER ACCOUNT BALANCE</div>
+          <div class="balance-card">
+            <div style="color:var(--cyan-glitch); font-size: 12px; text-transform:uppercase;">Available Wallet Balance</div>
+            <div class="balance-amount" id="ret-balance-display">₹ 0.00</div>
+            <div style="color:var(--dim-green); font-size: 12px;">Real-Time System Balance</div>
+          </div>
+          <div style="display:flex; gap: 10px; justify-content: center;">
+            <button class="btn" style="flex:1;" onclick="goToPaymentPage('Retailer Wallet Top-Up', 500, true)"><i class="fas fa-plus-circle"></i> REQUEST TOP-UP</button>
+            <button class="btn" style="flex:1;"><i class="fas fa-history"></i> STATEMENT</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: PROFILE -->
+        <div class="dash-panel">
+          <div class="panel-title"><i class="fas fa-user-circle"></i> RETAILER PROFILE</div>
+          <div class="profile-info">
+            <div class="profile-field">
+              <div class="profile-label">Retailer Name</div>
+              <div id="dash-user-name" style="color:#fff; font-weight:bold;">Sagar Boss</div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-label">User / Agent ID</div>
+              <div id="dash-user-id" style="color:var(--primary-green);">SB_RET_884920</div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-label">Center Location</div>
+              <div style="color:#fff;">Belagavi, Karnataka</div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-label">Status</div>
+              <div style="color:var(--primary-green);"><i class="fas fa-check-circle"></i> VERIFIED AGENT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AADHAAR SERVICES MAIN MENU VIEW -->
+    <div id="aadhaar-view" class="dashboard-view">
+      <div class="dashboard-header">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.5rem; color:var(--primary-green);">&gt;_ IDENTIFIER SERVICES PORTAL</h1>
+        <button class="btn" onclick="backToRetailerDashboard()"><i class="fas fa-arrow-left"></i> BACK TO DASHBOARD</button>
+      </div>
+
+      <div class="sub-services-grid">
+        <!-- 1. MANUAL ENTRY -->
+        <div class="sub-service-card" onclick="openAadhaarFormView('manual')">
+          <div class="sub-service-icon"><i class="fas fa-keyboard"></i></div>
+          <div class="sub-service-title">1) Manual Entry</div>
+          <div class="sub-service-desc">Direct demographic data entry &amp; bilingual card generation module.</div>
+          <button class="btn" style="width:100%;">ACCESS SERVICE (₹ <span class="aadhaar-fee-disp">50</span>)</button>
+        </div>
+
+        <!-- 2. OTP VERIFICATION -->
+        <div class="sub-service-card" onclick="openAadhaarFormView('otp')">
+          <div class="sub-service-icon"><i class="fas fa-mobile-alt"></i></div>
+          <div class="sub-service-title">2) OTP Verification</div>
+          <div class="sub-service-desc">Instant mobile OTP authentication &amp; identity fetch.</div>
+          <button class="btn" style="width:100%;">ACCESS SERVICE (₹ <span class="aadhaar-fee-disp">50</span>)</button>
+        </div>
+
+        <!-- 3. BIO SCAN -->
+        <div class="sub-service-card" onclick="openAadhaarFormView('bio')">
+          <div class="sub-service-icon"><i class="fas fa-fingerprint"></i></div>
+          <div class="sub-service-title">3) Bio Scan</div>
+          <div class="sub-service-desc">Fingerprint / Iris biometric scanner verification service.</div>
+          <button class="btn" style="width:100%;">ACCESS SERVICE (₹ <span class="aadhaar-fee-disp">50</span>)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1) MANUAL AADHAAR FORM VIEW WITH MULTI-LANGUAGE TRANSLATOR -->
+    <div id="aadhaar-manual-form-view" class="dashboard-view">
+      <div class="dashboard-header">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.2rem; color:var(--primary-green);">&gt;_ MANUAL FORM ENTRY (ENGLISH MANDATORY + BILINGUAL)</h1>
+        <button class="btn" onclick="goToAadhaarPage()"><i class="fas fa-arrow-left"></i> BACK TO MENU</button>
+      </div>
+
+      <div class="form-container-box">
+        <div class="panel-title" style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
+          <div><i class="fas fa-edit"></i> <span id="lbl-form-title">ENTER RETAILER / APPLICANT FORM DATA</span></div>
+          
+          <!-- LANGUAGE SELECTOR DROPDOWN -->
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-language" style="color:var(--cyan-glitch); font-size:18px;"></i>
+            <select id="form-lang-select" onchange="changeFormLanguage(this.value)" style="background:#000; border:1px solid var(--cyan-glitch); color:var(--cyan-glitch); padding:4px 8px; font-family:var(--font-mono); font-size:12px; cursor:pointer;">
+              <option value="as">Assamese (অসমীয়া)</option>
+              <option value="bn">Bengali (বাংলা)</option>
+              <option value="en" selected>English (Default)</option>
+              <option value="gu">Gujarati (ગુજરાતી)</option>
+              <option value="hi">Hindi (हिंदी)</option>
+              <option value="kn">Kannada (ಕನ್ನಡ)</option>
+              <option value="kok">Konkani (कोंकणी)</option>
+              <option value="ml">Malayalam (മലയാളം)</option>
+              <option value="mni">Manipuri (ꯃꯤତෛꯂꯣꯟ)</option>
+              <option value="mr">Marathi (मराठी)</option>
+              <option value="ne">Nepali (नेपाली)</option>
+              <option value="or">Odia (ଓଡ଼ିଆ)</option>
+              <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+              <option value="ta">Tamil (தமிழ்)</option>
+              <option value="te">Telugu (తెలుగు)</option>
+              <option value="ur">Urdu (اردو)</option>
+            </select>
+          </div>
+        </div>
+
+        <form onsubmit="handleManualAadhaarSubmit(event)">
+          <div class="admin-form-group">
+            <label id="lbl-aadhaar">&gt; ID NUMBER (ENGLISH MANDATORY)</label>
+            <input type="text" id="m-aadhaar-no" placeholder="e.g. 1234 5678 9012" maxlength="14" required />
+          </div>
+
+          <div class="form-row-grid">
+            <div class="admin-form-group">
+              <label id="lbl-name">&gt; FULL NAME (ENGLISH)</label>
+              <input type="text" id="m-name" placeholder="Applicant Name" required />
+            </div>
+            <div class="admin-form-group">
+              <label id="lbl-father">&gt; FATHER'S NAME (ENGLISH)</label>
+              <input type="text" id="m-father-name" placeholder="Father's Name" required />
+            </div>
+          </div>
+
+          <div class="form-row-grid">
+            <div class="admin-form-group">
+              <label id="lbl-gender">&gt; GENDER</label>
+              <select id="m-gender" required>
+                <option value="Male" id="opt-male">Male</option>
+                <option value="Female" id="opt-female">Female</option>
+                <option value="Other" id="opt-other">Other</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label id="lbl-dob">&gt; DATE OF BIRTH</label>
+              <input type="date" id="m-dob" required />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label id="lbl-address">&gt; FULL RESIDENTIAL ADDRESS (ENGLISH)</label>
+            <textarea id="m-address" rows="3" placeholder="House No, Village/City, District, State - Pincode" required></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label id="lbl-photo">&gt; UPLOAD PASSPORT PHOTO</label>
+            <input type="file" id="m-photo" accept="image/*" onchange="previewManualPhoto(event)" required />
+          </div>
+
+          <button type="submit" class="btn" style="width:100%; margin-top:15px;" id="m-sub-btn">[ <span id="lbl-submit-text">SUBMIT &amp; DEDUCT</span> ₹<span class="aadhaar-fee-disp">50</span> ]</button>
+        </form>
+        <div id="m-status-msg" class="auth-msg"></div>
+      </div>
+    </div>
+
+    <!-- 2) OTP FORM VIEW -->
+    <div id="aadhaar-otp-form-view" class="dashboard-view">
+      <div class="dashboard-header">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.2rem; color:var(--primary-green);">&gt;_ OTP VERIFICATION AUTHENTICATION</h1>
+        <button class="btn" onclick="goToAadhaarPage()"><i class="fas fa-arrow-left"></i> BACK TO MENU</button>
+      </div>
+
+      <div class="form-container-box">
+        <div class="panel-title" style="margin-bottom: 20px;"><i class="fas fa-mobile-alt"></i> STEP 1: ENTER ID NUMBER &amp; CAPTCHA</div>
+        <form onsubmit="handleOtpAadhaarSend(event)" id="otp-step1-form">
+          <div class="admin-form-group">
+            <label>&gt; ID NUMBER</label>
+            <input type="text" id="o-aadhaar-no" placeholder="12-Digit Number" maxlength="14" required />
+          </div>
+
+          <div class="form-row-grid">
+            <div class="admin-form-group">
+              <label>&gt; CAPTCHA CODE</label>
+              <input type="text" id="o-captcha-input" placeholder="Enter Captcha" required />
+            </div>
+            <div class="admin-form-group" style="display:flex; align-items:center; justify-content:center; background:#000; border:1px solid var(--dark-green); margin-top:18px; height:38px; color:var(--cyan-glitch); font-weight:bold; letter-spacing:4px; font-size:18px;">
+              8X9K2P
+            </div>
+          </div>
+
+          <button type="submit" class="btn" style="width:100%; margin-top:15px;" id="o-send-btn">[ SEND OTP TO REGISTERED MOBILE ]</button>
+        </form>
+
+        <!-- STEP 2: OTP VERIFY -->
+        <form onsubmit="handleOtpAadhaarVerify(event)" id="otp-step2-form" style="display:none; margin-top:20px; border-top:1px dashed var(--dark-green); padding-top:20px;">
+          <div class="admin-form-group">
+            <label>&gt; ENTER 6-DIGIT OTP RECEIVED</label>
+            <input type="text" id="o-otp-input" placeholder="e.g. 482910" maxlength="6" required />
+          </div>
+          <button type="submit" class="btn" style="width:100%; margin-top:10px;" id="o-verify-btn">[ SUBMIT OTP &amp; GENERATE CARD ]</button>
+        </form>
+
+        <div id="o-status-msg" class="auth-msg"></div>
+      </div>
+    </div>
+
+    <!-- 3) BIO FORM VIEW -->
+    <div id="aadhaar-bio-form-view" class="dashboard-view">
+      <div class="dashboard-header">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.2rem; color:var(--primary-green);">&gt;_ BIO SCAN BIOMETRIC SCAN</h1>
+        <button class="btn" onclick="goToAadhaarPage()"><i class="fas fa-arrow-left"></i> BACK TO MENU</button>
+      </div>
+
+      <div class="form-container-box">
+        <div class="panel-title" style="margin-bottom: 20px;"><i class="fas fa-fingerprint"></i> BIOMETRIC DEVICE AUTHENTICATION</div>
+        <form onsubmit="handleBioAadhaarScan(event)">
+          <div class="admin-form-group">
+            <label>&gt; ID NUMBER</label>
+            <input type="text" id="b-aadhaar-no" placeholder="12-Digit Number" maxlength="14" required />
+          </div>
+
+          <div class="admin-form-group">
+            <label>&gt; SELECT SCANNER DEVICE</label>
+            <select required>
+              <option value="Mantra MFS100">Mantra MFS100 Fingerprint Scanner</option>
+              <option value="Morpho MSO300">Morpho MSO300 Scanner</option>
+              <option value="SecuGen Hamster">SecuGen Hamster Pro</option>
+              <option value="MIS100 Iris">Mantra MIS100 Iris Scanner</option>
+            </select>
+          </div>
+
+          <div style="text-align:center; padding:20px; border:1px dashed var(--cyan-glitch); margin:15px 0;">
+            <i class="fas fa-fingerprint" id="bio-scan-icon" style="font-size:4rem; color:var(--cyan-glitch); cursor:pointer;"></i>
+            <div style="font-size:12px; color:var(--dim-green); margin-top:10px;">Place finger/iris on device and click Scan below</div>
+          </div>
+
+          <button type="submit" class="btn" style="width:100%;" id="b-scan-btn">[ CAPTURE BIOMETRIC &amp; AUTHENTICATE ]</button>
+        </form>
+
+        <div id="b-status-msg" class="auth-msg"></div>
+      </div>
+    </div>
+
+    <!-- GENERATED CARD PRINT PREVIEW VIEW -->
+    <div id="aadhaar-card-result-view" class="dashboard-view">
+      <div class="dashboard-header">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.2rem; color:var(--primary-green);">&gt;_ CARD GENERATED SUCCESSFULLY (BILINGUAL)</h1>
+        <button class="btn" onclick="goToAadhaarPage()"><i class="fas fa-arrow-left"></i> BACK TO MENU</button>
+      </div>
+
+      <div style="text-align:center; margin-bottom:15px;">
+        <button class="btn" onclick="window.print()" style="font-size:16px; padding:10px 25px;"><i class="fas fa-print"></i> PRINT CARD PDF</button>
+      </div>
+
+      <div id="printable-card-area">
+        <div class="aadhaar-card-preview">
+          <div class="card-header-bar">
+            <div class="card-header-title"><i class="fas fa-id-card"></i> Government Identity Authority</div>
+            <div style="font-size:10px; color:#555;">Government of India</div>
+          </div>
+
+          <div class="card-body-layout">
+            <img id="card-display-photo" class="card-photo-frame" src="https://via.placeholder.com/100x120?text=PHOTO" alt="Card Photo">
+            <div class="card-info-details">
+              <div><b>Name:</b> <span id="card-disp-name">Sagar Boss</span></div>
+              <div><b>S/O:</b> <span id="card-disp-father">Ramesh Boss</span></div>
+              <div><b>DOB:</b> <span id="card-disp-dob">01/01/1995</span></div>
+              <div><b>Gender:</b> <span id="card-disp-gender">Male</span></div>
+              <div style="margin-top:4px; font-size:10px;"><b>Address:</b> <span id="card-disp-address">Belagavi, Karnataka - 590001</span></div>
+            </div>
+          </div>
+
+          <div class="card-number-bold" id="card-disp-aadhaar-no">
+            XXXX XXXX 9012
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STANDALONE PAYMENT PAGE VIEW -->
+    <div id="payment-view" class="dashboard-view">
+      <div class="dashboard-header" style="border-bottom-color: var(--paytm-blue);">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.5rem; color:var(--paytm-blue);">&gt;_ PAYTM / UPI PAYMENT GATEWAY</h1>
+        <button class="btn" onclick="backToRetailerDashboard()"><i class="fas fa-arrow-left"></i> BACK TO DASHBOARD</button>
+      </div>
+
+      <div class="payment-page-container">
+        <!-- LEFT PAY CARD: SCAN QR -->
+        <div class="pay-card">
+          <div style="font-size:12px; color:var(--dim-green); text-transform:uppercase;">Selected Purpose</div>
+          <div id="pg-purpose" style="font-size:18px; font-weight:bold; color:var(--cyan-glitch); margin-bottom: 5px;">Retailer Wallet Top-Up</div>
+          
+          <div style="font-size: 2.2rem; font-weight: bold; color: var(--primary-green);" id="pg-display-amount">₹ 500.00</div>
+
+          <div class="paytm-qr-display">
+            <img id="pg-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=paytmmp%3A%2F%2Fpay%3Fpa%3Dsagarboss%40paytm%26pn%3DSagarBoss%26am%3D500%26cu%3DINR" alt="Paytm QR Code">
+          </div>
+
+          <div style="font-size:12px; color:#aaa; margin-top:5px;">
+            Scan QR Code using <b>Paytm, Google Pay, PhonePe</b> or any UPI App to complete payment to Admin.
+          </div>
+        </div>
+
+        <!-- RIGHT PAY CARD: FORM & ACTION -->
+        <div class="pay-card" style="text-align: left;">
+          <div class="panel-title" style="border-bottom-color: var(--paytm-blue); color: var(--paytm-blue); margin-bottom: 20px;">
+            <i class="fas fa-wallet"></i> PAYMENT DETAILS
+          </div>
+
+          <form onsubmit="processStandalonePayment(event)">
+            <div class="pay-input-group" id="pg-amt-input-box">
+              <label>&gt; Top-Up Amount (₹)</label>
+              <input type="number" id="pg-custom-amt" value="500" min="1" required oninput="updatePgQrAmount(this.value)" />
+              <div class="quick-amt-btns">
+                <button type="button" class="btn-amt" onclick="setQuickAmount(100)">+ ₹100</button>
+                <button type="button" class="btn-amt" onclick="setQuickAmount(500)">+ ₹500</button>
+                <button type="button" class="btn-amt" onclick="setQuickAmount(1000)">+ ₹1000</button>
+                <button type="button" class="btn-amt" onclick="setQuickAmount(2000)">+ ₹2000</button>
+              </div>
+            </div>
+
+            <div class="pay-input-group">
+              <label>&gt; Paytm VPA / UPI ID / Mobile Number</label>
+              <input type="text" id="pg-vpa-input" placeholder="e.g. mobile@paytm or 9876543210" required />
+            </div>
+
+            <div class="pay-input-group">
+              <label>&gt; Transaction Reference / UTR No. (Optional)</label>
+              <input type="text" id="pg-utr-input" placeholder="e.g. 402910XXXXXX" />
+            </div>
+
+            <button type="submit" class="btn-paytm-submit" id="pg-submit-btn">
+              <i class="fas fa-check-circle"></i> CONFIRM PAYMENT &amp; AUTO-APPROVE
+            </button>
+          </form>
+
+          <div id="pg-status-msg" style="margin-top:15px; font-size:13px; min-height:22px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD PANEL -->
+    <div id="admin-dashboard" class="dashboard-view">
+      <div class="dashboard-header" style="border-bottom-color: var(--cyan-glitch);">
+        <h1 style="font-family:'VT323', monospace; font-size: 2.5rem; color:var(--cyan-glitch);">&gt;_ SAGAR_BOSS ADMIN CONTROL PANEL</h1>
+        <button class="btn btn-danger" onclick="logoutToLanding()"><i class="fas fa-power-off"></i> LOGOUT ADMIN</button>
+      </div>
+
+      <div class="admin-grid">
+        <!-- RETAILER MANAGEMENT -->
+        <div class="dash-panel">
+          <div class="panel-title"><i class="fas fa-users-cog"></i> RETAILER MANAGEMENT</div>
+          
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>ID / Mobile</th>
+                <th>Balance</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-retailer-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+
+          <div style="margin-top:20px; border-top:1px dashed var(--dark-green); padding-top:15px;">
+            <div style="font-weight:bold; color:var(--cyan-glitch); margin-bottom:10px;">+ ADD NEW RETAILER</div>
+            <form onsubmit="adminAddRetailer(event)">
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="admin-form-group">
+                  <label>Full Name</label>
+                  <input type="text" id="adm-new-name" placeholder="Agent Name" required />
+                </div>
+                <div class="admin-form-group">
+                  <label>User ID / Email</label>
+                  <input type="text" id="adm-new-id" placeholder="User ID" required />
+                </div>
+                <div class="admin-form-group">
+                  <label>Mobile Number</label>
+                  <input type="tel" id="adm-new-mobile" placeholder="Mobile" required pattern="[0-9]{10}" />
+                </div>
+                <div class="admin-form-group">
+                  <label>Initial Password</label>
+                  <input type="password" id="adm-new-pass" placeholder="Password" required />
+                </div>
+              </div>
+              <button type="submit" class="btn" style="width:100%; margin-top:5px;">[ CREATE RETAILER NODE ]</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- WALLET TOP-UP, CHARGES CONTROL & TICKETS -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- TOP UP PANEL -->
+          <div class="dash-panel">
+            <div class="panel-title"><i class="fas fa-coins"></i> RETAILER WALLET TOP-UP</div>
+            <form onsubmit="adminTopupRetailer(event)">
+              <div class="admin-form-group">
+                <label>Select Retailer</label>
+                <select id="adm-topup-select" required></select>
+              </div>
+              <div class="admin-form-group">
+                <label>Amount (₹)</label>
+                <input type="number" id="adm-topup-amount" placeholder="e.g. 5000" min="1" required />
+              </div>
+              <button type="submit" class="btn" style="width:100%; margin-top:5px;">[ INJECT WALLET BALANCE ]</button>
+            </form>
+            <div id="adm-topup-msg" class="auth-msg"></div>
+          </div>
+
+          <!-- RETAILER SUPPORT TICKETS SOLVER PANEL -->
+          <div class="dash-panel">
+            <div class="panel-title"><i class="fas fa-ticket-alt"></i> RETAILER SUPPORT TICKETS</div>
+            <div style="max-height: 220px; overflow-y: auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Retailer</th>
+                    <th>Category</th>
+                    <th>Issue Description</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-tickets-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SERVICE CHARGES EDIT PANEL -->
+          <div class="dash-panel">
+            <div class="panel-title"><i class="fas fa-edit"></i> RETAILER SERVICE CHARGES MANAGEMENT</div>
+            <form onsubmit="adminUpdateCharges(event)">
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="admin-form-group">
+                  <label>Service Fee (₹)</label>
+                  <input type="number" id="charge-aadhaar" required />
+                </div>
+                <div class="admin-form-group">
+                  <label>PAN Card Fee (₹)</label>
+                  <input type="number" id="charge-pan" required />
+                </div>
+                <div class="admin-form-group">
+                  <label>Voter Services Fee (₹)</label>
+                  <input type="number" id="charge-voter" required />
+                </div>
+                <div class="admin-form-group">
+                  <label>Banking / AEPS Fee (₹)</label>
+                  <input type="number" id="charge-banking" required />
+                </div>
+                <div class="admin-form-group" style="grid-column: span 2;">
+                  <label>Other Services Fee (₹)</label>
+                  <input type="number" id="charge-other" required />
+                </div>
+              </div>
+              <button type="submit" class="btn" style="width:100%; margin-top:5px;">[ UPDATE RETAILER RATES ]</button>
+            </form>
+            <div id="adm-charge-msg" class="auth-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN LANDING VIEW -->
+    <div id="main-landing-view">
+      <!-- MATRIX CANVAS -->
+      <canvas id="matrix-canvas"></canvas>
+
+      <!-- TICKER -->
+      <div class="hacker-ticker-bar">
+        <div class="ticker-track">
+          <span>00101101 [EXPLOIT] Injecting core payload...</span>
+          <span class="ticker-alert">[CRITICAL] UNAUTHORIZED SYSTEM INTRUSION DETECTED</span>
+          <span>rm -rf /sys/kernel/security/ --no-preserve-root</span>
+          <span class="ticker-alert">[WARNING] PROTOCOL BREACHED AT NODE_0x9F</span>
+          <span>exec 3&lt;&gt;/dev/tcp/10.0.0.1/4444 &amp;&amp; cat &lt;&amp;3</span>
+          <span>0xDeadBeef &gt;&gt; OVERWRITING SECTOR_666</span>
+          <span class="ticker-alert">[SYSTEM CORRUPTED] NO TURN BACK NOW...</span>
+          <span>00101101 [EXPLOIT] Injecting core payload...</span>
+          <span class="ticker-alert">[CRITICAL] UNAUTHORIZED SYSTEM INTRUSION DETECTED</span>
+          <span>rm -rf /sys/kernel/security/ --no-preserve-root</span>
+          <span class="ticker-alert">[WARNING] PROTOCOL BREACHED AT NODE_0x9F</span>
+          <span>exec 3&lt;&gt;/dev/tcp/10.0.0.1/4444 &amp;&amp; cat &lt;&amp;3</span>
+          <span>0xDeadBeef &gt;&gt; OVERWRITING SECTOR_666</span>
+          <span class="ticker-alert">[SYSTEM CORRUPTED] NO TURN BACK NOW...</span>
+        </div>
+      </div>
+
+      <!-- HEADER -->
+      <header>
+        <div class="logo-section">
+          <div class="logo-placeholder">&gt;_ SAGAR_BOSS</div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn" id="btn-register" onclick="trigger2SecGlitch(() => showAuthPage('register'))"><i class="fas fa-user-plus"></i> REGISTER</button>
+          <button class="btn" id="btn-login" onclick="trigger2SecGlitch(() => showAuthPage('login'))"><i class="fas fa-key"></i> LOGIN</button>
+        </div>
+      </header>
+
+      <!-- HERO SECTION -->
+      <section class="hero">
+        <div class="hero-title-group">
+          <h1 class="terminal-header">SAGAR_BOSS</h1>
+          <p class="tagline">&gt;&gt; ALL SERVICES, AT ONE PLACE &lt;&lt;</p>
+        </div>
+
+        <!-- RUNNING MAN ANIMATION CONTAINER -->
+        <div id="running-man-container">
+          <div class="runner-status" id="runner-status-text">&gt; RUNNING TO FETCH PAGE...</div>
+          <div class="runner-track">
+            <div class="runner-man" id="runner-sprite">
+  O 
+ /|\
+ / \ 
+            </div>
+            <div class="runner-destination">📄</div>
+          </div>
+        </div>
+
+        <!-- ACCESS DOOR CONTAINER -->
+        <div id="door-section">
+          <div class="auth-header" style="text-align:center;">&gt; VERIFICATION SUCCESSFUL</div>
+          <p style="color:var(--primary-green); font-size:13px; margin-bottom:10px;">[ CLICK DOOR TO ENTER PORTAL ]</p>
+          
+          <div class="door-frame" id="door-frame-element" onclick="openAccessDoorAndEnter()" title="Click to Open Door">
+            <div class="door-panel">
+              <div class="door-knob"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="register-page" class="auth-section">
+          <div class="auth-header">&gt; EXECUTE ./user_register.sh</div>
+          <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+              <label>&gt; FULL NAME</label>
+              <input type="text" id="reg-name" placeholder="Enter Full Name" required />
+            </div>
+            <div class="form-group">
+              <label>&gt; MOBILE NUMBER</label>
+              <input type="tel" id="reg-mobile" placeholder="10-Digit Mobile Number" required pattern="[0-9]{10}" />
+            </div>
+            <div class="form-group">
+              <label>&gt; EMAIL ADDRESS / USER ID</label>
+              <input type="text" id="reg-email" placeholder="e.g. demo or user@domain.com" required />
+            </div>
+            <div class="form-group">
+              <label>&gt; PASSWORD</label>
+              <input type="password" id="reg-password" placeholder="Create Password" required minlength="4" />
+            </div>
+            <button type="submit" class="btn" style="width:100%; margin-top:10px;">[ CREATE USER NODE ]</button>
+          </form>
+          <div id="reg-msg" class="auth-msg"></div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="login-page" class="auth-section">
+          <div class="auth-header">&gt; AUTHENTICATE ACCESS</div>
+          <div style="font-size:11px; color:var(--cyan-glitch); margin-bottom:15px; border:1px dashed var(--dark-green); padding:6px;">
+            <div>Admin Login &gt; ID: <b>admin</b> | Pass: <b>admin</b></div>
+            <div>Retailer Login &gt; ID: <b>demo</b> | Pass: <b>demo</b></div>
+          </div>
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>&gt; USER ID / EMAIL</label>
+              <input type="text" id="login-id" placeholder="Enter User ID (admin or demo)" required />
+            </div>
+            <div class="form-group">
+              <label>&gt; PASSWORD</label>
+              <input type="password" id="login-password" placeholder="Enter Password" required />
+            </div>
+            <button type="submit" class="btn" style="width:100%; margin-top:10px;">[ VERIFY CREDENTIALS ]</button>
+            
+            <div class="form-extra-actions">
+              <a href="javascript:void(0)" onclick="trigger2SecGlitch(() => showAuthPage('forgot'))" style="color:var(--dim-green); text-decoration:underline;">&gt; Forgot Password? Reset Access</a>
+            </div>
+          </form>
+          <div id="login-msg" class="auth-msg"></div>
+        </div>
+
+        <!-- FORGOT PASSWORD FORM -->
+        <div id="forgot-page" class="auth-section">
+          <div class="auth-header">&gt; SYSTEM ACCESS RECOVERY</div>
+          <form onsubmit="handleForgotPassword(event)">
+            <div class="form-group">
+              <label>&gt; REGISTERED EMAIL OR USER ID</label>
+              <input type="text" id="forgot-id" placeholder="Enter your Registered ID" required />
+            </div>
+            <div class="form-group">
+              <label>&gt; NEW PASSWORD</label>
+              <input type="password" id="forgot-new-pass" placeholder="Enter New Password" required minlength="4" />
+            </div>
+            <button type="submit" class="btn" style="width:100%; margin-top:10px;">[ OVERWRITE PASSWORD NODE ]</button>
+            <div class="form-extra-actions">
+              <a href="javascript:void(0)" onclick="trigger2SecGlitch(() => showAuthPage('login'))" style="color:var(--dim-green);">&lt; Return to Login</a>
+            </div>
+          </form>
+          <div id="forgot-msg" class="auth-msg"></div>
+        </div>
+      </section>
+
+      <!-- SYSTEM INVESTIGATION MODAL -->
+      <div id="investigation-overlay">
+        <div class="investigation-box">
+          <div class="investigation-title" id="inv-title">
+            <i class="fas fa-exclamation-triangle"></i> INVESTIGATION IN PROGRESS
+          </div>
+          <div class="investigation-body" id="inv-body"></div>
+          <div class="investigation-actions" id="inv-actions"></div>
+        </div>
+      </div>
+
+      <!-- MAIN SERVICES SECTION -->
+      <section class="main-services-intro">
+        <h2>&lt;ALL_SERVICES /&gt;</h2>
+        <p style="color: var(--dim-green);">&gt; Loading module: Government, Private &amp; Digital Portals...</p>
+      </section>
+    </div>
+
+    <!-- FLOATING ROBOT ASSISTANT BUTTON -->
+    <div class="floating-robot" onclick="openRobotTicketModal()" title="AI Robot Assistant — Raise Ticket">
+      <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- ROBOT SUPPORT & TICKET MODAL -->
+    <div id="robot-modal-overlay">
+      <div class="robot-modal">
+        <div class="robot-header">
+          <div class="robot-title"><i class="fas fa-robot"></i> ROBOT ASSISTANT</div>
+          <button class="btn btn-danger btn-sm" onclick="closeRobotTicketModal()">X</button>
+        </div>
+        <div>
+          <div style="font-size:12px; color:var(--dim-green); margin-bottom:15px;">
+            Hello! How can I assist you today? Raise a support ticket directly to the admin for any service or website issues.
+          </div>
+
+          <form onsubmit="submitRetailerTicket(event)">
+            <div class="admin-form-group">
+              <label>&gt; ISSUE CATEGORY</label>
+              <select id="ticket-category" required>
+                <option value="Service Issue">Service Issue (Identifier, PAN, Voter, AEPS, etc.)</option>
+                <option value="Website Bug / Error">Website Bug / Technical Error</option>
+                <option value="Wallet / Payment Issue">Wallet / Payment Transaction Issue</option>
+                <option value="Other Query">Other Portal Query</option>
+              </select>
+            </div>
+
+            <div class="admin-form-group">
+              <label>&gt; DESCRIBE ISSUE</label>
+              <textarea id="ticket-desc" rows="4" placeholder="Explain the problem in detail..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn" style="width:100%; margin-top:10px;"><i class="fas fa-paper-plane"></i> [ SUBMIT TICKET TO ADMIN ]</button>
+          </form>
+          <div id="ticket-status-msg" class="auth-msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATRIX RAIN BACKGROUND SCRIPT -->
+    <script>
+      const matrixCanvas = document.getElementById('matrix-canvas');
+      const mCtx = matrixCanvas.getContext('2d');
+
+      let mWidth = matrixCanvas.width = window.innerWidth;
+      let mHeight = matrixCanvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        mWidth = matrixCanvas.width = window.innerWidth;
+        mHeight = matrixCanvas.height = window.innerHeight;
+      });
+
+      const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+      const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+      const alphabet = katakana + latin;
+
+      const fontSize = 14;
+      const columns = Math.floor(mWidth / fontSize);
+      const rainDrops = Array.from({ length: columns }).fill(1);
+
+      function drawMatrix() {
+        mCtx.fillStyle = 'rgba(5, 8, 6, 0.08)';
+        mCtx.fillRect(0, 0, mWidth, mHeight);
+
+        mCtx.fillStyle = '#00ff66';
+        mCtx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < rainDrops.length; i++) {
+          const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+          mCtx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+          if (rainDrops[i] * fontSize > mHeight && Math.random() > 0.975) {
+            rainDrops[i] = 0;
+          }
+          rainDrops[i]++;
+        }
+      }
+
+      setInterval(drawMatrix, 30);
+    </script>
+
+    <!-- RETRO AUDIO GENERATOR -->
+    <script>
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      let audioCtx = null;
+
+      function playRetroSound(freq, type, duration) {
+        try {
+          if (!audioCtx) audioCtx = new AudioCtx();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type || 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      function triggerShake() {
+        document.body.classList.add('shake');
+        setTimeout(() => document.body.classList.remove('shake'), 300);
+      }
+
+      function trigger2SecGlitch(callback) {
+        document.body.classList.add('glitching');
+        
+        let count = 0;
+        const glitchAudioInterval = setInterval(() => {
+          playRetroSound(100 + Math.random() * 800, 'sawtooth', 0.08);
+          count++;
+          if (count >= 12) clearInterval(glitchAudioInterval);
+        }, 180);
+
+        setTimeout(() => {
+          document.body.classList.remove('glitching');
+          if (callback) callback();
+        }, 2500);
+      }
+    </script>
+
+    <!-- SYSTEM DATA & DUAL LOGIC -->
+    <script>
+      let activeUser = null;
+      let activeRole = 'retailer';
+      let manualCardPhotoData = 'https://via.placeholder.com/75x95?text=PHOTO';
+
+      // Bilingual & Regional Dictionary Mapping (English mandatory + Secondary language)
+      const multiLangDictionary = {
+        as: { gender: "পুৰুষ / Male", state: "অসম / Assam" },
+        bn: { gender: "পুরুষ / Male", state: "পশ্চিমবঙ্গ / West Bengal" },
+        gu: { gender: "પુરુષ / Male", state: "ગુજરાત / Gujarat" },
+        hi: { gender: "पुरुष / Male", state: "कर्नाटक / Karnataka" },
+        kn: { gender: "ಪುರುಷ / Male", state: "ಕರ್ನಾಟಕ / Karnataka" },
+        kok: { gender: "दादलो / Male", state: "कर्नाटक / Karnataka" },
+        ml: { gender: "പുരുഷൻ / Male", state: "കർണാടക / Karnataka" },
+        mni: { gender: "নুপা / Male", state: "করনাটকা / Karnataka" },
+        mr: { gender: "पुरुष / Male", state: "कर्नाटक / Karnataka" },
+        ne: { gender: "पुरुष / Male", state: "कर्नाटक / Karnataka" },
+        or: { gender: "ପୁରୁଷ / Male", state: "କର୍ଣ୍ଣାଟକ / Karnataka" },
+        pa: { gender: "ਪੁਰਸ਼ / Male", state: "ਕਰਨਾਟਕ / Karnataka" },
+        ta: { gender: "ஆண் / Male", state: "கர்நாடகா / Karnataka" },
+        te: { gender: "పురుషుడు / Male", state: "కర్ణాటక / Karnataka" },
+        ur: { gender: "مرد / Male", state: "کرناٹک / Karnataka" },
+        en: { gender: "Male", state: "Karnataka" }
+      };
+
+      let selectedPortalLanguage = 'en';
+
+      function initDatabase() {
+        if (!localStorage.getItem('sb_users')) {
+          const defaultUsers = [
+            { name: "Demo Retailer", mobile: "9876543210", email: "demo", password: "demo", balance: 15400 }
+          ];
+          localStorage.setItem('sb_users', JSON.stringify(defaultUsers));
+        }
+
+        if (!localStorage.getItem('sb_charges')) {
+          const defaultCharges = {
+            aadhaar: 50,
+            pan: 107,
+            voter: 25,
+            banking: 10,
+            other: 15
+          };
+          localStorage.setItem('sb_charges', JSON.stringify(defaultCharges));
+        }
+
+        if (!localStorage.getItem('sb_tickets')) {
+          const defaultTickets = [
+            { id: "TK-802", retailer: "demo", category: "Website Bug / Error", desc: "Facing delay in card generation response.", status: "Pending" }
+          ];
+          localStorage.setItem('sb_tickets', JSON.stringify(defaultTickets));
+        }
+      }
+
+      initDatabase();
+
+      const runFrames = [
+`  O 
+ /|\
+ / \ `,
+`  O 
+<|\ 
+ / \ `,
+`  O 
+ /|>
+ / \ `,
+`  O 
+ /|\ 
+ < \ `
+      ];
+
+      let isRunning = false;
+
+      function showAuthPage(targetPage) {
+        if (isRunning) return;
+
+        const regPage = document.getElementById('register-page');
+        const loginPage = document.getElementById('login-page');
+        const forgotPage = document.getElementById('forgot-page');
+        const doorSec = document.getElementById('door-section');
+        const runnerBox = document.getElementById('running-man-container');
+        const runnerSprite = document.getElementById('runner-sprite');
+        const runnerText = document.getElementById('runner-status-text');
+
+        regPage.classList.remove('active');
+        loginPage.classList.remove('active');
+        forgotPage.classList.remove('active');
+        doorSec.style.display = 'none';
+        document.getElementById('btn-register').classList.remove('active-btn');
+        document.getElementById('btn-login').classList.remove('active-btn');
+        document.getElementById('reg-msg').innerHTML = '';
+        document.getElementById('login-msg').innerHTML = '';
+        document.getElementById('forgot-msg').innerHTML = '';
+
+        runnerBox.style.display = 'block';
+        runnerText.innerText = `> DISPATCHING AGENT TO FETCH ${targetPage.toUpperCase()} PAGE...`;
+        
+        if (targetPage === 'register') {
+          document.getElementById('btn-register').classList.add('active-btn');
+        } else if (targetPage === 'login') {
+          document.getElementById('btn-login').classList.add('active-btn');
+        }
+
+        isRunning = true;
+        let pos = -50;
+        let frameIdx = 0;
+
+        const runInterval = setInterval(() => {
+          pos += 12;
+          frameIdx = (frameIdx + 1) % runFrames.length;
+          
+          runnerSprite.style.left = pos + 'px';
+          runnerSprite.innerText = runFrames[frameIdx];
+
+          if (pos % 24 === 0) playRetroSound(200 + pos, 'sawtooth', 0.05);
+
+          if (pos >= 480) {
+            clearInterval(runInterval);
+            runnerText.innerText = `> PAGE SECURED! OPENING ${targetPage.toUpperCase()}...`;
+            playRetroSound(880, 'sine', 0.2);
+            triggerShake();
+            
+            setTimeout(() => {
+              runnerBox.style.display = 'none';
+              isRunning = false;
+
+              if (targetPage === 'register') {
+                regPage.classList.add('active');
+              } else if (targetPage === 'login') {
+                loginPage.classList.add('active');
+              } else if (targetPage === 'forgot') {
+                forgotPage.classList.add('active');
+              }
+            }, 400);
+          }
+        }, 40);
+      }
+
+      function closeInvestigation() {
+        document.getElementById('investigation-overlay').style.display = 'none';
+      }
+
+      function openInvestigationModal(type, targetId) {
+        const overlay = document.getElementById('investigation-overlay');
+        const titleBox = document.getElementById('inv-title');
+        const bodyBox = document.getElementById('inv-body');
+        const actionsBox = document.getElementById('inv-actions');
+
+        playRetroSound(100, 'sawtooth', 0.5);
+        triggerShake();
+
+        if (type === 'INVALID_ID') {
+          titleBox.innerHTML = `<i class="fas fa-search-location" style="color:var(--blood-red)"></i> SYSTEM INVESTIGATION: UNREGISTERED USER ID`;
+          bodyBox.innerHTML = `
+            <div style="color:var(--blood-red); font-weight:bold; margin-bottom:8px;">[ERR_NODE_NOT_FOUND] Query ID: '${targetId}'</div>
+            <div>The system security scanner has run an automated investigation across all database nodes. No active profile matching this identifier exists on this network.</div>
+            <div style="margin-top:10px; color:var(--warning-yellow);">&gt; ACTION REQUIRED: You must first create a user profile before accessing services.</div>
+          `;
+          actionsBox.innerHTML = `
+            <button class="btn" onclick="closeInvestigation(); trigger2SecGlitch(() => showAuthPage('register'));">[ GO TO REGISTER ]</button>
+            <button class="btn btn-danger" onclick="closeInvestigation()">[ DISMISS ]</button>
+          `;
+        } else if (type === 'INVALID_PASSWORD') {
+          titleBox.innerHTML = `<i class="fas fa-user-shield" style="color:var(--warning-yellow)"></i> SYSTEM INVESTIGATION: CREDENTIAL MISMATCH`;
+          bodyBox.innerHTML = `
+            <div style="color:var(--warning-yellow); font-weight:bold; margin-bottom:8px;">[ERR_AUTH_FAILED] Target Node: '${targetId}'</div>
+            <div>Security protocol detected an incorrect password attempt for this registered user node.</div>
+            <div style="margin-top:10px; color:var(--cyan-glitch);">&gt; ACTION REQUIRED: If you forgot your login password, trigger the security reset option below.</div>
+          `;
+          actionsBox.innerHTML = `
+            <button class="btn" onclick="closeInvestigation(); trigger2SecGlitch(() => { showAuthPage('forgot'); document.getElementById('forgot-id').value = '${targetId}'; });">[ FORGOT PASSWORD ]</button>
+            <button class="btn btn-danger" onclick="closeInvestigation()">[ RETRY ]</button>
+          `;
+        }
+
+        overlay.style.display = 'flex';
+      }
+
+      function openRobotTicketModal() {
+        document.getElementById('robot-modal-overlay').style.display = 'flex';
+        document.getElementById('ticket-status-msg').innerText = '';
+        playRetroSound(700, 'triangle', 0.2);
+      }
+
+      function closeRobotTicketModal() {
+        document.getElementById('robot-modal-overlay').style.display = 'none';
+      }
+
+      function submitRetailerTicket(e) {
+        e.preventDefault();
+        const cat = document.getElementById('ticket-category').value;
+        const desc = document.getElementById('ticket-desc').value.trim();
+        const statusMsg = document.getElementById('ticket-status-msg');
+
+        if (!desc) return;
+
+        let tickets = JSON.parse(localStorage.getItem('sb_tickets') || '[]');
+        const newTicket = {
+          id: 'TK-' + Math.floor(100 + Math.random() * 900),
+          retailer: activeUser ? activeUser.email : 'demo',
+          category: cat,
+          desc: desc,
+          status: 'Pending'
+        };
+
+        tickets.push(newTicket);
+        localStorage.setItem('sb_tickets', JSON.stringify(tickets));
+
+        playRetroSound(850, 'sine', 0.3);
+        statusMsg.className = 'auth-msg msg-success';
+        statusMsg.innerText = `> TICKET ${newTicket.id} SENT TO ADMIN PANEL SUCCESSFULLY!`;
+
+        document.getElementById('ticket-desc').value = '';
+
+        setTimeout(() => {
+          closeRobotTicketModal();
+        }, 1800);
+      }
+
+      function deductionsCheckAndProcess(serviceFee, callback) {
+        let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+        const idx = users.findIndex(u => u.email === (activeUser ? activeUser.email : 'demo'));
+
+        if (idx !== -1 && users[idx].balance >= serviceFee) {
+          users[idx].balance -= serviceFee;
+          localStorage.setItem('sb_users', JSON.stringify(users));
+
+          if (activeUser) {
+            document.getElementById('ret-balance-display').innerText = `₹ ${users[idx].balance.toLocaleString('en-IN')}.00`;
+          }
+          callback(true);
+        } else {
+          callback(false);
+        }
+      }
+
+      /* SERVICES NAVIGATION & FORMS */
+      function goToAadhaarPage() {
+        trigger2SecGlitch(() => {
+          hideAllDashboardViews();
+          document.getElementById('aadhaar-view').style.display = 'block';
+
+          const charges = JSON.parse(localStorage.getItem('sb_charges') || '{}');
+          const fee = charges.aadhaar || 50;
+          document.querySelectorAll('.aadhaar-fee-disp').forEach(el => el.innerText = fee);
+        });
+      }
+
+      function openAadhaarFormView(type) {
+        trigger2SecGlitch(() => {
+          hideAllDashboardViews();
+          if (type === 'manual') {
+            document.getElementById('aadhaar-manual-form-view').style.display = 'block';
+            document.getElementById('m-status-msg').innerText = '';
+          } else if (type === 'otp') {
+            document.getElementById('aadhaar-otp-form-view').style.display = 'block';
+            document.getElementById('otp-step1-form').style.display = 'block';
+            document.getElementById('otp-step2-form').style.display = 'none';
+            document.getElementById('o-status-msg').innerText = '';
+          } else if (type === 'bio') {
+            document.getElementById('aadhaar-bio-form-view').style.display = 'block';
+            document.getElementById('b-status-msg').innerText = '';
+          }
+        });
+      }
+
+      function previewManualPhoto(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            manualCardPhotoData = e.target.result;
+          }
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function changeFormLanguage(langCode) {
+        selectedPortalLanguage = langCode;
+        const title = document.getElementById('lbl-form-title');
+        const btnText = document.getElementById('lbl-submit-text');
+
+        if (langCode === 'hi') {
+          title.innerText = "रिटेलर / आवेदक फॉर्म डेटा दर्ज करें (English Mandatory + हिंदी)";
+          btnText.innerText = "सबमिट करें और काटें";
+        } else if (langCode === 'kn') {
+          title.innerText = "ಚಿಲ್ಲರೆ ವ್ಯಾಪಾರಿ / ಅರ್ಜಿದಾರರ ನಮೂನೆ (English Mandatory + ಕನ್ನಡ)";
+          btnText.innerText = "ಸಲ್ಲಿಸಿ ಮತ್ತು ಕಡಿತಗೊಳಿಸಿ";
+        } else if (langCode === 'mr') {
+          title.innerText = "रिटेलर / अर्जदार फॉर्म डेटा (English Mandatory + मराठी)";
+          btnText.innerText = "सादर करा आणि वजा करा";
+        } else {
+          title.innerText = "ENTER RETAILER / APPLICANT FORM DATA (English Mandatory)";
+          btnText.innerText = "SUBMIT & DEDUCT";
+        }
+      }
+
+      function handleManualAadhaarSubmit(e) {
+        e.preventDefault();
+        const num = document.getElementById('m-aadhaar-no').value.trim();
+        const name = document.getElementById('m-name').value.trim();
+        const father = document.getElementById('m-father-name').value.trim();
+        const genderVal = document.getElementById('m-gender').value;
+        const dob = document.getElementById('m-dob').value;
+        const address = document.getElementById('m-address').value.trim();
+        const statusMsg = document.getElementById('m-status-msg');
+
+        const charges = JSON.parse(localStorage.getItem('sb_charges') || '{}');
+        const fee = charges.aadhaar || 50;
+
+        // Retrieve dual-language mapping based on selection
+        const langMap = multiLangDictionary[selectedPortalLanguage] || multiLangDictionary['en'];
+        const displayGender = selectedPortalLanguage === 'en' ? genderVal : `${genderVal} / ${langMap.gender}`;
+
+        deductionsCheckAndProcess(fee, (success) => {
+          if (!success) {
+            statusMsg.className = 'auth-msg msg-error';
+            statusMsg.innerText = '> INSUFFICIENT WALLET BALANCE TO PROCESS!';
+            playRetroSound(150, 'sawtooth', 0.3);
+            return;
+          }
+
+          statusMsg.className = 'auth-msg msg-success';
+          statusMsg.innerText = `> FEE ₹${fee} DEDUCTED! GENERATING BILINGUAL CARD...`;
+          playRetroSound(800, 'sine', 0.4);
+
+          setTimeout(() => {
+            // English Mandatory + Selected Language Rendered
+            document.getElementById('card-disp-name').innerText = name;
+            document.getElementById('card-disp-father').innerText = father;
+            document.getElementById('card-disp-dob').innerText = dob ? dob.split('-').reverse().join('/') : '01/01/1995';
+            document.getElementById('card-disp-gender').innerText = displayGender;
+            document.getElementById('card-disp-address').innerText = selectedPortalLanguage === 'en' ? address : `${address} [Lang: ${selectedPortalLanguage.toUpperCase()}]`;
+            document.getElementById('card-display-photo').src = manualCardPhotoData;
+            document.getElementById('card-disp-aadhaar-no').innerText = num.length >= 4 ? 'XXXX XXXX ' + num.slice(-4) : 'XXXX XXXX 9012';
+
+            trigger2SecGlitch(() => {
+              hideAllDashboardViews();
+              document.getElementById('aadhaar-card-result-view').style.display = 'block';
+            });
+          }, 1500);
+        });
+      }
+
+      function handleOtpAadhaarSend(e) {
+        e.preventDefault();
+        const statusMsg = document.getElementById('o-status-msg');
+        statusMsg.className = 'auth-msg msg-success';
+        statusMsg.innerText = '> OTP SENT SUCCESSFULLY TO REGISTERED MOBILE NUMBER!';
+        playRetroSound(700, 'sine', 0.3);
+
+        document.getElementById('otp-step1-form').style.display = 'none';
+        document.getElementById('otp-step2-form').style.display = 'block';
+      }
+
+      function handleOtpAadhaarVerify(e) {
+        e.preventDefault();
+        const num = document.getElementById('o-aadhaar-no').value.trim();
+        const statusMsg = document.getElementById('o-status-msg');
+
+        const charges = JSON.parse(localStorage.getItem('sb_charges') || '{}');
+        const fee = charges.aadhaar || 50;
+
+        deductionsCheckAndProcess(fee, (success) => {
+          if (!success) {
+            statusMsg.className = 'auth-msg msg-error';
+            statusMsg.innerText = '> INSUFFICIENT WALLET BALANCE TO PROCESS!';
+            playRetroSound(150, 'sawtooth', 0.3);
+            return;
+          }
+
+          statusMsg.className = 'auth-msg msg-success';
+          statusMsg.innerText = `> OTP VERIFIED! FEE ₹${fee} DEDUCTED & CARD GENERATED.`;
+          playRetroSound(900, 'sine', 0.4);
+
+          setTimeout(() => {
+            document.getElementById('card-disp-name').innerText = "Verified Applicant";
+            document.getElementById('card-disp-father').innerText = "System Record";
+            document.getElementById('card-disp-dob').innerText = "15/08/1992";
+            document.getElementById('card-disp-gender').innerText = "Male / पुरुष";
+            document.getElementById('card-disp-address').innerText = "Belagavi, Karnataka - 590001";
+            document.getElementById('card-display-photo').src = "https://via.placeholder.com/100x120?text=OTP+PHOTO";
+            document.getElementById('card-disp-aadhaar-no').innerText = num.length >= 4 ? 'XXXX XXXX ' + num.slice(-4) : 'XXXX XXXX 4321';
+
+            trigger2SecGlitch(() => {
+              hideAllDashboardViews();
+              document.getElementById('aadhaar-card-result-view').style.display = 'block';
+            });
+          }, 1500);
+        });
+      }
+
+      function handleBioAadhaarScan(e) {
+        e.preventDefault();
+        const num = document.getElementById('b-aadhaar-no').value.trim();
+        const statusMsg = document.getElementById('b-status-msg');
+
+        const charges = JSON.parse(localStorage.getItem('sb_charges') || '{}');
+        const fee = charges.aadhaar || 50;
+
+        deductionsCheckAndProcess(fee, (success) => {
+          if (!success) {
+            statusMsg.className = 'auth-msg msg-error';
+            statusMsg.innerText = '> INSUFFICIENT WALLET BALANCE TO PROCESS!';
+            playRetroSound(150, 'sawtooth', 0.3);
+            return;
+          }
+
+          statusMsg.className = 'auth-msg msg-success';
+          statusMsg.innerText = `> BIOMETRIC MATCHED! FEE ₹${fee} DEDUCTED & CARD GENERATED.`;
+          playRetroSound(950, 'sine', 0.4);
+
+          setTimeout(() => {
+            document.getElementById('card-disp-name').innerText = "Biometric Verified User";
+            document.getElementById('card-disp-father').innerText = "Authorized Record";
+            document.getElementById('card-disp-dob').innerText = "10/10/1990";
+            document.getElementById('card-disp-gender').innerText = "Female / महिला";
+            document.getElementById('card-disp-address').innerText = "Belagavi, Karnataka - 590001";
+            document.getElementById('card-display-photo').src = "https://via.placeholder.com/100x120?text=BIO+PHOTO";
+            document.getElementById('card-disp-aadhaar-no').innerText = num.length >= 4 ? 'XXXX XXXX ' + num.slice(-4) : 'XXXX XXXX 8877';
+
+            trigger2SecGlitch(() => {
+              hideAllDashboardViews();
+              document.getElementById('aadhaar-card-result-view').style.display = 'block';
+            });
+          }, 1500);
+        });
+      }
+
+      function hideAllDashboardViews() {
+        document.getElementById('homepage-dashboard').style.display = 'none';
+        document.getElementById('payment-view').style.display = 'none';
+        document.getElementById('aadhaar-view').style.display = 'none';
+        document.getElementById('aadhaar-manual-form-view').style.display = 'none';
+        document.getElementById('aadhaar-otp-form-view').style.display = 'none';
+        document.getElementById('aadhaar-bio-form-view').style.display = 'none';
+        document.getElementById('aadhaar-card-result-view').style.display = 'none';
+      }
+
+      /* STANDALONE PAYMENT PAGE NAVIGATION & LOGIC */
+      let currentPgAmount = 500;
+      let currentPgPurpose = 'Retailer Wallet Top-Up';
+      let isTopUpMode = true;
+
+      function goToPaymentPage(purpose, amount, topupMode = false) {
+        currentPgPurpose = purpose;
+        currentPgAmount = amount;
+        isTopUpMode = topupMode;
+
+        trigger2SecGlitch(() => {
+          hideAllDashboardViews();
+          document.getElementById('payment-view').style.display = 'block';
+
+          document.getElementById('pg-purpose').innerText = purpose;
+          document.getElementById('pg-display-amount').innerText = `₹ ${amount.toFixed(2)}`;
+          document.getElementById('pg-vpa-input').value = '';
+          document.getElementById('pg-utr-input').value = '';
+          document.getElementById('pg-status-msg').innerText = '';
+
+          const amtBox = document.getElementById('pg-amt-input-box');
+          const amtInput = document.getElementById('pg-custom-amt');
+
+          if (isTopUpMode) {
+            amtBox.style.display = 'block';
+            amtInput.value = amount;
+          } else {
+            amtBox.style.display = 'none';
+          }
+
+          updatePgQrImg(amount);
+        });
+      }
+
+      function backToRetailerDashboard() {
+        goToDashboardHomepage();
+      }
+
+      function setQuickAmount(amt) {
+        document.getElementById('pg-custom-amt').value = amt;
+        updatePgQrAmount(amt);
+      }
+
+      function updatePgQrAmount(val) {
+        const amt = parseFloat(val);
+        if (!isNaN(amt) && amt > 0) {
+          currentPgAmount = amt;
+          document.getElementById('pg-display-amount').innerText = `₹ ${amt.toFixed(2)}`;
+          updatePgQrImg(amt);
+        } else {
+          currentPgAmount = 0;
+          document.getElementById('pg-display-amount').innerText = `₹ 0.00`;
+        }
+      }
+
+      function updatePgQrImg(amt) {
+        const qrImg = document.getElementById('pg-qr-img');
+        const qrData = encodeURIComponent(`paytmmp://pay?pa=sagarboss@paytm&pn=SagarBoss&am=${amt}&cu=INR`);
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}`;
+      }
+
+      function processStandalonePayment(e) {
+        e.preventDefault();
+        const vpa = document.getElementById('pg-vpa-input').value.trim();
+        const statusMsg = document.getElementById('pg-status-msg');
+        const submitBtn = document.getElementById('pg-submit-btn');
+
+        if (!vpa || currentPgAmount <= 0) return;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> VERIFYING PAYMENT...`;
+        statusMsg.style.color = "var(--warning-yellow)";
+        statusMsg.innerText = "> Connecting to Paytm Payment Gateway & Auto-Approving...";
+
+        playRetroSound(400, 'sawtooth', 0.3);
+
+        setTimeout(() => {
+          if (isTopUpMode) {
+            let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+            const idx = users.findIndex(u => u.email === (activeUser ? activeUser.email : 'demo'));
+            if (idx !== -1) {
+              users[idx].balance = (users[idx].balance || 0) + currentPgAmount;
+              localStorage.setItem('sb_users', JSON.stringify(users));
+            }
+            statusMsg.style.color = "var(--primary-green)";
+            statusMsg.innerText = `> SUCCESS: ₹ ${currentPgAmount} AUTO-APPROVED & CREDITED TO WALLET!`;
+          } else {
+            let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+            const idx = users.findIndex(u => u.email === (activeUser ? activeUser.email : 'demo'));
+            if (idx !== -1 && users[idx].balance >= currentPgAmount) {
+              users[idx].balance -= currentPgAmount;
+              localStorage.setItem('sb_users', JSON.stringify(users));
+              statusMsg.style.color = "var(--primary-green)";
+              statusMsg.innerText = `> PAYMENT SUCCESS: Charged ₹ ${currentPgAmount} via Paytm!`;
+            } else {
+              statusMsg.style.color = "var(--error-red)";
+              statusMsg.innerText = `> INSUFFICIENT BALANCE FOR SERVICE CHARGE!`;
+            }
+          }
+
+          playRetroSound(900, 'triangle', 0.4);
+          
+          setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-check-circle"></i> CONFIRM PAYMENT &amp; AUTO-APPROVE`;
+            backToRetailerDashboard();
+          }, 1800);
+
+        }, 2000);
+      }
+
+      function handleRegister(e) {
+        e.preventDefault();
+        const name = document.getElementById('reg-name').value.trim();
+        const mobile = document.getElementById('reg-mobile').value.trim();
+        const email = document.getElementById('reg-email').value.trim().toLowerCase();
+        const password = document.getElementById('reg-password').value;
+        const msgBox = document.getElementById('reg-msg');
+
+        let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+
+        const existing = users.find(u => u.email === email || u.mobile === mobile);
+        if (existing) {
+          playRetroSound(150, 'sawtooth', 0.3);
+          triggerShake();
+          msgBox.className = 'auth-msg msg-error';
+          msgBox.innerText = '> ERROR: User record already exists with this Email/User ID or Mobile!';
+          return;
+        }
+
+        users.push({ name, mobile, email, password, balance: 0 });
+        localStorage.setItem('sb_users', JSON.stringify(users));
+
+        playRetroSound(600, 'sine', 0.3);
+        msgBox.className = 'auth-msg msg-success';
+        msgBox.innerText = '> SUCCESS: Retailer profile registered! Redirecting to Login...';
+
+        setTimeout(() => {
+          trigger2SecGlitch(() => {
+            showAuthPage('login');
+            document.getElementById('login-id').value = email;
+          });
+        }, 1200);
+      }
+
+      function handleLogin(e) {
+        e.preventDefault();
+        const loginId = document.getElementById('login-id').value.trim().toLowerCase();
+        const password = document.getElementById('login-password').value;
+        const msgBox = document.getElementById('login-msg');
+
+        if (loginId === 'admin') {
+          if (password === 'admin') {
+            activeUser = { name: "System Admin", email: "admin" };
+            activeRole = 'admin';
+            playRetroSound(800, 'triangle', 0.4);
+            triggerShake();
+            msgBox.className = 'auth-msg msg-success';
+            msgBox.innerText = `> ACCESS GRANTED: ADMIN LEVEL 1 VERIFIED!`;
+
+            setTimeout(() => {
+              document.getElementById('login-page').classList.remove('active');
+              const doorSec = document.getElementById('door-section');
+              doorSec.style.display = 'block';
+              document.getElementById('door-frame-element').classList.remove('open');
+            }, 800);
+            return;
+          } else {
+            msgBox.className = 'auth-msg msg-error';
+            msgBox.innerText = '> INVESTIGATION INITIATED: Invalid Admin Password.';
+            openInvestigationModal('INVALID_PASSWORD', 'admin');
+            return;
+          }
+        }
+
+        let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+        const userExists = users.find(u => u.email === loginId || u.mobile === loginId);
+
+        if (!userExists) {
+          msgBox.className = 'auth-msg msg-error';
+          msgBox.innerText = '> INVESTIGATION INITIATED: Unregistered User ID.';
+          openInvestigationModal('INVALID_ID', loginId);
+          return;
+        }
+
+        if (userExists.password === password) {
+          activeUser = userExists;
+          activeRole = 'retailer';
+          playRetroSound(800, 'triangle', 0.4);
+          triggerShake();
+          msgBox.className = 'auth-msg msg-success';
+          msgBox.innerText = `> ACCESS GRANTED: Retailer Verified!`;
+
+          setTimeout(() => {
+            document.getElementById('login-page').classList.remove('active');
+            const doorSec = document.getElementById('door-section');
+            doorSec.style.display = 'block';
+            document.getElementById('door-frame-element').classList.remove('open');
+          }, 800);
+
+        } else {
+          msgBox.className = 'auth-msg msg-error';
+          msgBox.innerText = '> INVESTIGATION INITIATED: Invalid Password.';
+          openInvestigationModal('INVALID_PASSWORD', loginId);
+        }
+      }
+
+      function openAccessDoorAndEnter() {
+        const doorFrame = document.getElementById('door-frame-element');
+        doorFrame.classList.add('open');
+        playRetroSound(300, 'sawtooth', 0.6);
+
+        const welcomeTitle = document.getElementById('welcome-title-text');
+        const welcomeSub = document.getElementById('welcome-sub-text');
+
+        if (activeRole === 'admin') {
+          welcomeTitle.innerText = "WELCOME ADMIN";
+          welcomeSub.innerText = "> ACCESSING SYSTEM CONTROL PANEL... <";
+        } else {
+          welcomeTitle.innerText = "WELCOME TO OUR FAMILY";
+          welcomeSub.innerText = "> ACCESS GRANTED. REDIRECTING IN 2 SECONDS... <";
+        }
+
+        setTimeout(() => {
+          document.getElementById('welcome-screen').style.display = 'flex';
+          setTimeout(() => {
+            if (activeRole === 'admin') {
+              goToAdminDashboard();
+            } else {
+              goToDashboardHomepage();
+            }
+          }, 2000);
+        }, 800);
+      }
+
+      function goToDashboardHomepage() {
+        trigger2SecGlitch(() => {
+          document.getElementById('welcome-screen').style.display = 'none';
+          document.getElementById('main-landing-view').style.display = 'none';
+          hideAllDashboardViews();
+          document.getElementById('homepage-dashboard').style.display = 'block';
+
+          if (activeUser) {
+            document.getElementById('dash-user-name').innerText = activeUser.name || 'Demo Retailer';
+            document.getElementById('dash-user-id').innerText = activeUser.email || 'demo';
+            
+            let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+            const current = users.find(u => u.email === activeUser.email);
+            const balance = current ? current.balance : (activeUser.balance || 0);
+            document.getElementById('ret-balance-display').innerText = `₹ ${balance.toLocaleString('en-IN')}.00`;
+          }
+
+          loadRetailerServicesView();
+        });
+      }
+
+      function goToAdminDashboard() {
+        trigger2SecGlitch(() => {
+          document.getElementById('welcome-screen').style.display = 'none';
+          document.getElementById('main-landing-view').style.display = 'none';
+          hideAllDashboardViews();
+          document.getElementById('admin-dashboard').style.display = 'block';
+
+          renderAdminPanel();
+        });
+      }
+
+      function logoutToLanding() {
+        trigger2SecGlitch(() => {
+          document.getElementById('homepage-dashboard').style.display = 'none';
+          document.getElementById('admin-dashboard').style.display = 'none';
+          hideAllDashboardViews();
+          document.getElementById('main-landing-view').style.display = 'block';
+          showAuthPage('login');
+        });
+      }
+
+      function renderAdminPanel() {
+        let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+        let charges = JSON.parse(localStorage.getItem('sb_charges') || '{}');
+        let tickets = JSON.parse(localStorage.getItem('sb_tickets') || '[]');
+
+        const tbody = document.getElementById('admin-retailer-tbody');
+        tbody.innerHTML = '';
+
+        const select = document.getElementById('adm-topup-select');
+        select.innerHTML = '<option value="">-- Select Retailer --</option>';
+
+        users.forEach((u, idx) => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${u.name}</td>
+              <td>${u.email}</td>
+              <td style="color:var(--primary-green); font-weight:bold;">₹ ${u.balance || 0}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" onclick="adminDeleteRetailer(${idx})"><i class="fas fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `;
+          select.innerHTML += `<option value="${u.email}">${u.name} (${u.email})</option>`;
+        });
+
+        const tickTbody = document.getElementById('admin-tickets-tbody');
+        tickTbody.innerHTML = '';
+
+        if (tickets.length === 0) {
+          tickTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--dim-green);">No open tickets.</td></tr>`;
+        } else {
+          tickets.forEach((t, tIdx) => {
+            const isResolved = t.status === 'Resolved';
+            tickTbody.innerHTML += `
+              <tr>
+                <td><b>${t.retailer}</b></td>
+                <td style="color:var(--cyan-glitch);">${t.category}</td>
+                <td style="font-size:11px;">${t.desc}</td>
+                <td style="color:${isResolved ? 'var(--primary-green)' : 'var(--warning-yellow)'}; font-weight:bold;">${t.status}</td>
+                <td>
+                  ${isResolved ? '<span style="color:var(--dim-green); font-size:10px;">SOLVED</span>' : `<button class="btn btn-sm" onclick="adminResolveTicket(${tIdx})"><i class="fas fa-check"></i> Resolve</button>`}
+                </td>
+              </tr>
+            `;
+          });
+        }
+
+        document.getElementById('charge-aadhaar').value = charges.aadhaar || 50;
+        document.getElementById('charge-pan').value = charges.pan || 107;
+        document.getElementById('charge-voter').value = charges.voter || 25;
+        document.getElementById('charge-banking').value = charges.banking || 10;
+        document.getElementById('charge-other').value = charges.other || 15;
+      }
+
+      function adminResolveTicket(ticketIndex) {
+        let tickets = JSON.parse(localStorage.getItem('sb_tickets') || '[]');
+        if (tickets[ticketIndex]) {
+          tickets[ticketIndex].status = 'Resolved';
+          localStorage.setItem('sb_tickets', JSON.stringify(tickets));
+          playRetroSound(700, 'sine', 0.2);
+          renderAdminPanel();
+        }
+      }
+
+      function adminAddRetailer(e) {
+        e.preventDefault();
+        const name = document.getElementById('adm-new-name').value.trim();
+        const email = document.getElementById('adm-new-id').value.trim().toLowerCase();
+        const mobile = document.getElementById('adm-new-mobile').value.trim();
+        const password = document.getElementById('adm-new-pass').value;
+
+        let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+        if (users.find(u => u.email === email)) {
+          alert('User ID already exists!');
+          return;
+        }
+
+        users.push({ name, email, mobile, password, balance: 0 });
+        localStorage.setItem('sb_users', JSON.stringify(users));
+
+        document.getElementById('adm-new-name').value = '';
+        document.getElementById('adm-new-id').value = '';
+        document.getElementById('adm-new-mobile').value = '';
+        document.getElementById('adm-new-pass').value = '';
+
+        playRetroSound(600, 'sine', 0.2);
+        renderAdminPanel();
+      }
+
+      function adminDeleteRetailer(index) {
+        if (confirm('Are you sure you want to remove this retailer node?')) {
+          let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+          users.splice(index, 1);
+          localStorage.setItem('sb_users', JSON.stringify(users));
+          playRetroSound(200, 'sawtooth', 0.3);
+          renderAdminPanel();
+        }
+      }
+
+      function adminTopupRetailer(e) {
+        e.preventDefault();
+        const email = document.getElementById('adm-topup-select').value;
+        const amount = parseFloat(document.getElementById('adm-topup-amount').value);
+        const msg = document.getElementById('adm-topup-msg');
+
+        if (!email || isNaN(amount) || amount <= 0) return;
+
+        let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+        const idx = users.findIndex(u => u.email === email);
+
+        if (idx !== -1) {
+          users[idx].balance = (users[idx].balance || 0) + amount;
+          localStorage.setItem('sb_users', JSON.stringify(users));
+
+          playRetroSound(800, 'sine', 0.3);
+          msg.className = 'auth-msg msg-success';
+          msg.innerText = `> SUCCESS: ₹ ${amount} added to ${users[idx].name}'s wallet!`;
+
+          document.getElementById('adm-topup-amount').value = '';
+          renderAdminPanel();
+        }
+      }
+
+      function adminUpdateCharges(e) {
+        e.preventDefault();
+        const charges = {
+          aadhaar: parseFloat(document.getElementById('charge-aadhaar').value),
+          pan: parseFloat(document.getElementById('charge-pan').value),
+          voter: parseFloat(document.getElementById('charge-voter').value),
+          banking: parseFloat(document.getElementById('charge-banking').value),
+          other: parseFloat(document.getElementById('charge-other').value)
+        };
+
+        localStorage.setItem('sb_charges', JSON.stringify(charges));
+        playRetroSound(700, 'sine', 0.3);
+
+        const msg = document.getElementById('adm-charge-msg');
+        msg.className = 'auth-msg msg-success';
+        msg.innerText = '> SUCCESS: Retailer rates updated system-wide!';
+      }
+
+      function loadRetailerServicesView() {
+        const list = document.getElementById('retailer-services-list');
+
+        list.innerHTML = `
+          <div class="service-item" onclick="goToAadhaarPage()">
+            <span><i class="fas fa-id-card"></i> Identifier Services</span>
+            <i class="fas fa-chevron-right" style="color:var(--dim-green);"></i>
+          </div>
+          <div class="service-item" onclick="goToPanPage()">
+            <span><i class="fas fa-address-card"></i> PAN Card Portal</span>
+            <i class="fas fa-chevron-right" style="color:var(--dim-green);"></i>
+          </div>
+          <div class="service-item" onclick="goToVoterPage()">
+            <span><i class="fas fa-vote-yea"></i> Voter Services</span>
+            <i class="fas fa-chevron-right" style="color:var(--dim-green);"></i>
+          </div>
+          <div class="service-item" onclick="goToBankingPage()">
+            <span><i class="fas fa-university"></i> Banking &amp; AEPS</span>
+            <i class="fas fa-chevron-right" style="color:var(--dim-green);"></i>
+          </div>
+          <div class="service-item" onclick="goToOtherServicesPage()">
+            <span><i class="fas fa-cubes"></i> Other Services</span>
+            <i class="fas fa-chevron-right" style="color:var(--dim-green);"></i>
+          </div>
+        `;
+      }
+
+      function handleForgotPassword(e) {
+        e.preventDefault();
+        const targetId = document.getElementById('forgot-id').value.trim().toLowerCase();
+        const newPassword = document.getElementById('forgot-new-pass').value;
+        const msgBox = document.getElementById('forgot-msg');
+
+        let users = JSON.parse(localStorage.getItem('sb_users') || '[]');
+        const userIndex = users.findIndex(u => u.email === targetId || u.mobile === targetId);
+
+        if (targetId === 'admin') {
+          playRetroSound(700, 'sine', 0.4);
+          msgBox.className = 'auth-msg msg-success';
+          msgBox.innerText = '> ADMIN PASSWORD OVERWRITTEN: Redirecting to Login...';
+          setTimeout(() => {
+            trigger2SecGlitch(() => {
+              showAuthPage('login');
+              document.getElementById('login-id').value = targetId;
+            });
+          }, 1500);
+          return;
+        }
+
+        if (userIndex === -1) {
+          msgBox.className = 'auth-msg msg-error';
+          msgBox.innerText = '> ERROR: No registered profile found for recovery.';
+          openInvestigationModal('INVALID_ID', targetId);
+          return;
+        }
+
+        users[userIndex].password = newPassword;
+        localStorage.setItem('sb_users', JSON.stringify(users));
+
+        playRetroSound(700, 'sine', 0.4);
+        msgBox.className = 'auth-msg msg-success';
+        msgBox.innerText = '> PASSWORD OVERWRITTEN: Redirecting to Login...';
+
+        setTimeout(() => {
+          trigger2SecGlitch(() => {
+            showAuthPage('login');
+            document.getElementById('login-id').value = targetId;
+          });
+        }, 1500);
+      }
+    </script>
+  </body>
+</html>
