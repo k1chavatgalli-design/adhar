@@ -1,0 +1,255 @@
+/* =========================================================
+   MANOJ SERVICES - Core Custom Stylesheet & Print Styles
+   ========================================================= */
+
+/* Smooth Scrolling & Typography Defaults */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-heading {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Page View Transitions */
+.page-view {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Active Navigation Item Glow */
+.nav-link.active {
+  color: #2563eb !important;
+  background-color: #eff6ff !important;
+  font-weight: 700 !important;
+}
+
+/* Top-up quick select pill styles */
+.topup-pill {
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.topup-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.topup-pill.active {
+  border-color: #10b981 !important;
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  font-weight: 800;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+/* Card Glow Hover Effects */
+.service-glow-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-glow-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+/* Toast Notification Styles */
+.custom-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: auto;
+  animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInToast {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.custom-toast.toast-success {
+  border-left: 5px solid #10b981;
+}
+
+.custom-toast.toast-error {
+  border-left: 5px solid #ef4444;
+}
+
+.custom-toast.toast-info {
+  border-left: 5px solid #3b82f6;
+}
+
+/* Masked Aadhaar Display Styling */
+.aadhaar-badge {
+  letter-spacing: 0.15em;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   PRINT RECEIPT STYLESHEET (@media print)
+   Isolates only the official receipt for crystal clear printing
+   ========================================================= */
+.print-only {
+  display: none;
+}
+
+@media print {
+  /* Hide standard page elements */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make only the print receipt visible */
+  #printReceiptSection,
+  #printReceiptSection * {
+    visibility: visible;
+  }
+
+  #printReceiptSection {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Standard Indian CSC / Cyber Cafe Receipt Formats */
+  .receipt-card {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 24px;
+    border: 2px dashed #333333;
+    border-radius: 12px;
+    font-family: Arial, sans-serif;
+    color: #111;
+  }
+
+  .receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 12px;
+  }
+
+  .receipt-logo h2 {
+    font-size: 24px;
+    font-weight: 900;
+    margin: 0;
+    color: #000;
+    letter-spacing: 0.5px;
+  }
+
+  .receipt-logo p {
+    font-size: 11px;
+    margin: 3px 0 0;
+    color: #555;
+  }
+
+  .receipt-badge {
+    background: #000;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+
+  .receipt-divider {
+    border-top: 1px solid #ccc;
+    margin: 12px 0;
+  }
+
+  .receipt-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 12px;
+  }
+
+  .receipt-table th {
+    background: #f1f5f9;
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .receipt-table td {
+    border: 1px solid #000;
+    padding: 10px 8px;
+  }
+
+  .receipt-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #000;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin: 15px 0;
+  }
+
+  .receipt-footer {
+    text-align: center;
+    font-size: 10px;
+    color: #555;
+    margin-top: 20px;
+    border-top: 1px dashed #999;
+    padding-top: 10px;
+  }
+
+  .receipt-tagline {
+    font-weight: bold;
+    color: #000;
+    margin-top: 5px;
+  }
+}

@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MANOJ SERVICES - All-in-One Digital Portal | PAN Find & Voter Mobile Link</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Outfit"', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af',
+              800: '#1e3a8a',
+              900: '#0f172a',
+            },
+            brand: {
+              navy: '#0b192c',
+              accent: '#f97316',
+              gold: '#eab308',
+              emerald: '#10b981',
+              cyan: '#06b6d4',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-600 selection:text-white min-h-screen flex flex-col font-sans">
+
+  <!-- ========================================== -->
+  <!-- FULL SCREEN LOGIN GATEKEEPER               -->
+  <!-- MANDATORY LOGIN FIRST BEFORE ACCESS        -->
+  <!-- ========================================== -->
+  <div id="authGatekeeper" class="fixed inset-0 z-[9999] bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden animate-fade-in">
+      
+      <!-- Top Brand Header -->
+      <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 p-8 text-white text-center relative">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-3xl shadow-inner mb-3">
+          <i class="fa-solid fa-shield-halved text-yellow-300"></i>
+        </div>
+        <h1 class="text-2xl font-black font-heading tracking-tight">MANOJ SERVICES</h1>
+        <p class="text-xs text-blue-200 mt-1">Authorized Digital Seva & Utility Portal</p>
+        <div class="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-[11px] font-semibold text-yellow-300 border border-white/20">
+          <i class="fa-solid fa-lock text-xs"></i> Enter ID & Password to Login
+        </div>
+      </div>
+
+      <!-- Login Credentials Form -->
+      <div class="p-6 sm:p-8 space-y-5">
+        <form id="gatekeeperLoginForm" onsubmit="handleGatekeeperLogin(event)" class="space-y-4">
+          <div>
+            <label for="gatekeeperUserId" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+              User ID / Username <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <input 
+                type="text" 
+                id="gatekeeperUserId" 
+                required 
+                placeholder="Enter User ID (e.g. admin or manoj)" 
+                autocomplete="username"
+                class="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 font-semibold text-sm focus:bg-white focus:border-blue-600 focus:outline-none transition-all placeholder:text-slate-400"
+              >
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="gatekeeperPassword" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                Password <span class="text-red-500">*</span>
+              </label>
+            </div>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <input 
+                type="password" 
+                id="gatekeeperPassword" 
+                required 
+                placeholder="Enter Password" 
+                autocomplete="current-password"
+                class="w-full pl-10 pr-11 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-900 font-semibold text-sm focus:bg-white focus:border-blue-600 focus:outline-none transition-all placeholder:text-slate-400"
+              >
+              <button 
+                type="button" 
+                onclick="togglePasswordVisibility('gatekeeperPassword', 'gatekeeperEyeIcon')" 
+                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                title="Toggle password view"
+              >
+                <i class="fa-solid fa-eye" id="gatekeeperEyeIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Alert Banner -->
+          <div id="gatekeeperErrorAlert" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-red-500 text-sm flex-shrink-0"></i>
+            <span id="gatekeeperErrorMessage">Invalid User ID or Password.</span>
+          </div>
+
+          <button 
+            type="submit" 
+            id="gatekeeperSubmitBtn"
+            class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-blue-600/30 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            <span>Access Login</span>
+          </button>
+        </form>
+
+        <div class="relative flex items-center justify-center pt-2">
+          <div class="border-t border-slate-200 w-full"></div>
+          <span class="bg-white px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Default Testing Credentials</span>
+        </div>
+
+        <!-- 1-Click Fast Credentials for Demo/Testing -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button 
+            type="button" 
+            onclick="fillAndLoginGatekeeper('admin', 'admin123')"
+            class="p-2.5 rounded-xl border border-red-200 bg-red-50/60 hover:bg-red-100 text-left transition-colors cursor-pointer"
+          >
+            <div class="text-[11px] font-bold text-red-800 flex items-center gap-1">
+              <i class="fa-solid fa-crown text-amber-500"></i> Admin ID
+            </div>
+            <div class="text-[10px] text-slate-500 font-mono mt-0.5">admin / admin123</div>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="fillAndLoginGatekeeper('manoj', 'user123')"
+            class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100 text-left transition-colors cursor-pointer"
+          >
+            <div class="text-[11px] font-bold text-blue-800 flex items-center gap-1">
+              <i class="fa-solid fa-user text-blue-500"></i> User ID
+            </div>
+            <div class="text-[10px] text-slate-500 font-mono mt-0.5">manoj / user123</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Brand Logo -->
+        <a href="#home" onclick="navigateTo('home'); return false;" class="flex items-center gap-3 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform duration-200">
+            <i class="fa-solid fa-shield-halved text-2xl text-yellow-300"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-heading font-extrabold text-2xl tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">MANOJ</span>
+              <span class="font-heading font-bold text-2xl tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">SERVICES</span>
+            </div>
+            <p class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase flex items-center gap-1">
+              <i class="fa-solid fa-certificate text-emerald-500 text-[10px]"></i> Authorized Digital Seva Hub
+            </p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links (Role Dynamic) -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-1.5">
+          
+          <!-- USER SPECIFIC NAV LINKS -->
+          <div id="userNavLinks" class="flex items-center gap-1">
+            <button onclick="navigateTo('home')" class="nav-link px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 text-slate-700 hover:text-blue-600 hover:bg-blue-50" data-page="home">
+              <i class="fa-solid fa-house"></i> Home
+            </button>
+            
+            <!-- Services Dropdown -->
+            <div class="relative group">
+              <button class="nav-link px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 text-slate-700 hover:text-blue-600 hover:bg-blue-50" data-page="services-group">
+                <i class="fa-solid fa-grid-2 text-blue-600"></i> Services
+                <i class="fa-solid fa-chevron-down text-xs ml-0.5 text-slate-400 group-hover:rotate-180 transition-transform"></i>
+              </button>
+              <div class="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                <a href="#pan-find" onclick="navigateTo('pan-find'); return false;" class="flex items-start gap-3 p-3 rounded-xl hover:bg-blue-50/80 transition-colors group/item">
+                  <div class="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0 group-hover/item:scale-110 transition-transform">
+                    <i class="fa-solid fa-id-card text-lg"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-bold text-slate-900 group-hover/item:text-blue-600">PAN Find</h4>
+                    <p class="text-xs text-slate-500">Find linked Aadhaar number instantly</p>
+                    <span class="inline-block mt-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Fee: ₹15</span>
+                  </div>
+                </a>
+                <a href="#voter-link" onclick="navigateTo('voter-link'); return false;" class="flex items-start gap-3 p-3 rounded-xl hover:bg-blue-50/80 transition-colors group/item">
+                  <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover/item:scale-110 transition-transform">
+                    <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-bold text-slate-900 group-hover/item:text-blue-600">Voter Mobile Link</h4>
+                    <p class="text-xs text-slate-500">Check voter ID mobile link status</p>
+                    <span class="inline-block mt-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Fee: ₹10</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <!-- Wallet & Top-up Request -->
+            <button onclick="navigateTo('wallet')" class="nav-link px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 text-slate-700 hover:text-emerald-600 hover:bg-emerald-50" data-page="wallet">
+              <i class="fa-solid fa-wallet text-emerald-600"></i> Wallet & Top-up
+            </button>
+          </div>
+
+          <!-- ADMIN SPECIFIC NAV LINKS (Shown when Admin is logged in) -->
+          <div id="adminNavLinks" class="hidden flex items-center gap-1">
+            <button onclick="navigateTo('admin-dashboard')" class="nav-link px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 text-slate-700 hover:text-red-600 hover:bg-red-50" data-page="admin-dashboard">
+              <i class="fa-solid fa-gauge-high text-red-600"></i> Admin Panel
+            </button>
+            <button onclick="navigateTo('admin-users')" class="nav-link px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 text-slate-700 hover:text-blue-600 hover:bg-blue-50" data-page="admin-users">
+              <i class="fa-solid fa-users text-blue-600"></i> Manage Users
+            </button>
+            <button onclick="navigateTo('admin-wallet')" class="nav-link px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 text-slate-700 hover:text-emerald-600 hover:bg-emerald-50" data-page="admin-wallet">
+              <i class="fa-solid fa-hand-holding-dollar text-emerald-600"></i> Add Money & Topups
+            </button>
+            <button onclick="navigateTo('admin-api')" class="nav-link px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 text-slate-700 hover:text-purple-600 hover:bg-purple-50" data-page="admin-api">
+              <i class="fa-solid fa-key text-purple-600"></i> API Changes
+            </button>
+            <button onclick="openServiceHistoryModal('ALL')" class="px-3 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 text-slate-700 hover:text-amber-600 hover:bg-amber-50">
+              <i class="fa-solid fa-list-check text-amber-500"></i> All Searches
+            </button>
+          </div>
+        </nav>
+
+        <!-- Right Side: Wallet Balance, User Account & Login Switcher -->
+        <div class="flex items-center gap-3">
+          
+          <!-- Live Wallet Pill -->
+          <button onclick="navigateTo('wallet')" class="flex items-center gap-2.5 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 px-3 py-2 rounded-2xl transition-all cursor-pointer group shadow-sm" title="Click to view & request wallet top-up">
+            <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+            <div class="text-left">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Wallet</div>
+              <div class="text-sm font-extrabold text-slate-900 font-heading" id="navWalletBalance">₹500.00</div>
+            </div>
+            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center ml-1 group-hover:bg-blue-700">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+          </button>
+
+          <!-- User Profile & Logout -->
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-100 border border-slate-200">
+              <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold" id="headerUserAvatar">
+                MK
+              </div>
+              <div class="text-left hidden lg:block leading-tight">
+                <div class="text-[11px] font-bold text-slate-800" id="headerUserName">Manoj Kumar</div>
+                <div class="text-[9px] uppercase tracking-wider text-blue-600 font-bold" id="headerUserRoleBadge">USER</div>
+              </div>
+            </div>
+
+            <button onclick="handleLogout()" class="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 text-xs font-bold transition-all shadow-sm cursor-pointer" title="Log out of Manoj Services">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+              <span class="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+
+          <!-- Mobile Menu Toggle Button -->
+          <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none">
+            <i class="fa-solid fa-bars text-xl" id="mobileMenuIcon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobileMenu" class="md:hidden hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-2 shadow-xl animate-fade-in">
+      <div class="p-3 bg-blue-50/70 rounded-xl mb-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500">Available Balance</div>
+            <div class="text-lg font-extrabold text-slate-900" id="mobileWalletBalance">₹500.00</div>
+          </div>
+        </div>
+        <button onclick="handleLogout(); toggleMobileMenu();" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </button>
+      </div>
+
+      <!-- Mobile User Links -->
+      <div id="mobileUserLinks" class="space-y-1">
+        <button onclick="navigateTo('home'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-3">
+          <i class="fa-solid fa-house text-blue-600 w-5"></i> Home
+        </button>
+        <button onclick="navigateTo('pan-find'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-3">
+          <i class="fa-solid fa-id-card text-orange-600 w-5"></i> PAN Find (Find Aadhaar)
+        </button>
+        <button onclick="navigateTo('voter-link'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-3">
+          <i class="fa-solid fa-mobile-screen-button text-purple-600 w-5"></i> Voter Mobile Link
+        </button>
+        <button onclick="navigateTo('wallet'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-3">
+          <i class="fa-solid fa-wallet text-emerald-600 w-5"></i> Wallet & Top-up Request
+        </button>
+      </div>
+
+      <!-- Mobile Admin Links -->
+      <div id="mobileAdminLinks" class="hidden space-y-1 pt-2 border-t border-slate-100">
+        <div class="text-[11px] font-bold text-red-600 uppercase px-3 py-1">Admin Controls</div>
+        <button onclick="navigateTo('admin-dashboard'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-xl text-sm font-bold text-red-700 hover:bg-red-50 flex items-center gap-3">
+          <i class="fa-solid fa-gauge-high text-red-600 w-5"></i> Admin Dashboard
+        </button>
+        <button onclick="navigateTo('admin-users'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-3">
+          <i class="fa-solid fa-users text-blue-600 w-5"></i> Create & Manage Users
+        </button>
+        <button onclick="navigateTo('admin-wallet'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-3">
+          <i class="fa-solid fa-hand-holding-dollar text-emerald-600 w-5"></i> Add Money & Approve Topups
+        </button>
+        <button onclick="navigateTo('admin-api'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-xl text-sm font-bold text-slate-800 hover:bg-slate-100 flex items-center gap-3">
+          <i class="fa-solid fa-key text-purple-600 w-5"></i> Add API Changes
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner / Toast Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
+
+  <!-- MAIN APPLICATION CONTENT CONTAINER -->
+  <main class="flex-grow">
+    
+    <!-- ========================================== -->
+    <!-- 1. HOME / DASHBOARD VIEW (FOR USERS)       -->
+    <!-- ========================================== -->
+    <section id="view-home" class="page-view animate-fade-in">
+      <!-- Hero Section -->
+      <div class="relative bg-gradient-to-b from-blue-900 via-indigo-950 to-slate-900 text-white overflow-hidden py-14 sm:py-20">
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="text-center max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-yellow-300 text-xs font-semibold mb-6 shadow-inner">
+              <i class="fa-solid fa-shield-check"></i> Fast • Secure • Trusted Portal for Cyber Kiosks & Citizens
+            </div>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-heading leading-tight">
+              Instant Digital Utility <br class="hidden sm:inline">
+              <span class="bg-gradient-to-r from-yellow-300 via-orange-300 to-amber-200 bg-clip-text text-transparent">Verification & Services</span>
+            </h1>
+            <p class="mt-5 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              Find linked Aadhaar numbers from PAN in real-time, check Voter ID mobile link status, manage your wallet, and print official verification slips.
+            </p>
+
+            <!-- Quick Service Jump Buttons -->
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+              <button onclick="navigateTo('pan-find')" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-sm sm:text-base shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2.5">
+                <i class="fa-solid fa-id-card text-lg"></i>
+                <span>Open PAN Find</span>
+                <span class="bg-black/20 text-xs px-2 py-0.5 rounded-full font-normal">₹15</span>
+              </button>
+              <button onclick="navigateTo('voter-link')" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm sm:text-base shadow-xl shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2.5">
+                <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+                <span>Voter Mobile Link</span>
+                <span class="bg-black/20 text-xs px-2 py-0.5 rounded-full font-normal">₹10</span>
+              </button>
+              <button onclick="openServiceHistoryModal('ALL')" class="px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-semibold text-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-yellow-300"></i>
+                <span>Previously Used Services</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services Grid Section -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">Authorized Services</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading mt-2">Available Portal Services</h2>
+            <p class="text-slate-500 text-sm mt-1">Select a service below to start your query or view past history</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="openServiceHistoryModal('ALL')" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center gap-2 shadow transition-all">
+              <i class="fa-solid fa-clock-rotate-left text-yellow-400"></i>
+              <span>View Service History</span>
+            </button>
+            <button onclick="navigateTo('wallet')" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl transition-colors flex items-center gap-1.5 border border-emerald-200">
+              <i class="fa-solid fa-wallet"></i> Top-up Wallet
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- SERVICE CARD 1: PAN FIND -->
+          <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-orange-300 transition-all duration-300 relative group overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -z-0 transition-all group-hover:scale-125"></div>
+            
+            <div class="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-5">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-orange-500/20 group-hover:rotate-6 transition-transform">
+                    <i class="fa-solid fa-id-card"></i>
+                  </div>
+                  <div class="flex flex-col items-end">
+                    <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-orange-100 text-orange-700">Instant Lookup</span>
+                    <span class="text-xs font-semibold text-slate-400 mt-1">Tariff: <strong class="text-slate-800" id="cardPanFee">₹15.00</strong></span>
+                  </div>
+                </div>
+
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 font-heading group-hover:text-orange-600 transition-colors">
+                  PAN FIND (Find Linked Aadhaar)
+                </h3>
+                <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                  Enter customer's PAN number to view linked Aadhaar record, or enter 12-digit Aadhaar to retrieve PAN via apicentre PHP API.
+                </p>
+
+                <div class="mt-4 space-y-1.5 text-xs text-slate-500">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Validates 10-digit PAN format</div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Returns full masked Aadhaar (XXXX-XXXX-XXXX)</div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Includes printable customer receipt slip</div>
+                </div>
+              </div>
+
+              <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                <button onclick="openServiceHistoryModal('PAN_FIND')" class="text-xs font-bold text-slate-600 hover:text-orange-600 flex items-center gap-1.5 transition-colors">
+                  <i class="fa-solid fa-clock-rotate-left text-orange-500"></i> PAN History
+                </button>
+                <button onclick="navigateTo('pan-find')" class="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md shadow-orange-600/20 group-hover:shadow-lg transition-all flex items-center gap-2">
+                  <span>Start PAN Find</span>
+                  <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SERVICE CARD 2: VOTER MOBILE LINK -->
+          <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-purple-300 transition-all duration-300 relative group overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -z-0 transition-all group-hover:scale-125"></div>
+            
+            <div class="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-5">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-purple-600/20 group-hover:rotate-6 transition-transform">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                  </div>
+                  <div class="flex flex-col items-end">
+                    <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-purple-100 text-purple-700">ECI Verification</span>
+                    <span class="text-xs font-semibold text-slate-400 mt-1">Tariff: <strong class="text-slate-800" id="cardVoterFee">₹10.00</strong></span>
+                  </div>
+                </div>
+
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 font-heading group-hover:text-purple-600 transition-colors">
+                  VOTER MOBILE LINK (Check Status)
+                </h3>
+                <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                  Enter Voter ID (EPIC) and Mobile Number. Instantly verify whether the mobile number is registered and linked in the Electoral roll records.
+                </p>
+
+                <div class="mt-4 space-y-1.5 text-xs text-slate-500">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Real-time Electoral Roll lookup</div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Matched / Unlinked status indicator</div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Instant Form 8 mobile linking request</div>
+                </div>
+              </div>
+
+              <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                <button onclick="openServiceHistoryModal('VOTER_LINK')" class="text-xs font-bold text-slate-600 hover:text-purple-600 flex items-center gap-1.5 transition-colors">
+                  <i class="fa-solid fa-clock-rotate-left text-purple-500"></i> Voter History
+                </button>
+                <button onclick="navigateTo('voter-link')" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md shadow-purple-600/20 group-hover:shadow-lg transition-all flex items-center gap-2">
+                  <span>Check Voter Link</span>
+                  <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. PAN FIND SERVICE VIEW                   -->
+    <!-- ========================================== -->
+    <section id="view-pan-find" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        
+        <!-- Breadcrumb & Prominent HISTORY Button -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <button onclick="navigateTo('home')" class="text-sm font-semibold text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+          </button>
+          
+          <div class="flex items-center gap-3">
+            <!-- HISTORY BUTTON IN SERVICE -->
+            <button onclick="openServiceHistoryModal('PAN_FIND')" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer border border-slate-700">
+              <i class="fa-solid fa-clock-rotate-left text-yellow-400"></i>
+              <span>Service History</span>
+            </button>
+
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500">Wallet:</span>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200" id="panServiceWalletBalance">₹500.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service Main Box -->
+        <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
+          <!-- Card Header Banner -->
+          <div class="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 p-6 sm:p-8 text-white relative">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-3xl shadow-inner border border-white/20">
+                  <i class="fa-solid fa-id-card text-yellow-300"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold font-heading">PAN FIND SERVICE</h2>
+                    <span class="bg-white/20 text-white text-[11px] font-bold px-2 py-0.5 rounded-md">NSDL / UTI API</span>
+                  </div>
+                  <p class="text-orange-100 text-sm mt-1">Enter PAN Number to retrieve linked Aadhaar Number immediately</p>
+                </div>
+              </div>
+              <div class="text-right sm:border-l sm:border-white/20 sm:pl-6">
+                <div class="text-xs text-orange-200 uppercase font-semibold">Service Charge</div>
+                <div class="text-2xl font-black font-heading text-white" id="panBannerFee">₹15.00</div>
+                <div class="text-[10px] text-orange-200">Per Successful Query</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode Selection Tabs (PAN to Aadhaar OR Aadhaar to PAN) -->
+          <div class="px-6 sm:px-8 pt-6 pb-2 border-b border-slate-100 flex items-center gap-3">
+            <button type="button" id="tabPanToAadhaar" onclick="switchPanMode('PAN_TO_AADHAAR')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-orange-600 text-white shadow-md transition-all flex items-center gap-2">
+              <i class="fa-solid fa-id-card"></i>
+              <span>Find Linked Aadhaar (from PAN)</span>
+            </button>
+            <button type="button" id="tabAadhaarToPan" onclick="switchPanMode('AADHAAR_TO_PAN')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all flex items-center gap-2">
+              <i class="fa-solid fa-fingerprint text-blue-600"></i>
+              <span>Aadhaar to PAN Find (PHP API)</span>
+            </button>
+          </div>
+
+          <!-- Form Area -->
+          <div class="p-6 sm:p-8">
+            <form id="panFindForm" onsubmit="handlePanFindSubmit(event)" class="space-y-6">
+              
+              <!-- Mode 1: PAN Input -->
+              <div id="panInputGroup">
+                <label for="panInput" class="block text-sm font-bold text-slate-800 mb-2">
+                  Enter 10-Digit Permanent Account Number (PAN) <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-id-badge text-lg"></i>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="panInput" 
+                    name="panNumber" 
+                    maxlength="10" 
+                    placeholder="e.g. ABCDE1234F" 
+                    autocomplete="off"
+                    class="w-full pl-12 pr-28 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl text-slate-900 font-mono text-lg font-bold tracking-widest uppercase focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 focus:outline-none transition-all placeholder:text-slate-400 placeholder:normal-case placeholder:font-sans placeholder:tracking-normal placeholder:font-normal"
+                    oninput="this.value = this.value.toUpperCase(); validatePanFormat(this.value);"
+                  >
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-1">
+                    <span id="panFormatBadge" class="hidden text-xs font-semibold px-2 py-1 rounded-md"></span>
+                  </div>
+                </div>
+                <p class="mt-2 text-xs text-slate-500 flex items-center gap-1.5">
+                  <i class="fa-solid fa-bolt text-orange-500"></i>
+                  Calls <strong>https://www.apicentre.in/api/pan_to_aadhaar?api_key=...&pan_number=(PAN NUMBER)</strong> to fetch linked Aadhaar.
+                </p>
+              </div>
+
+              <!-- Mode 2: Aadhaar Input -->
+              <div id="aadhaarInputGroup" class="hidden">
+                <label for="aadhaarInput" class="block text-sm font-bold text-slate-800 mb-2">
+                  Enter 12-Digit Customer Aadhaar Number <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-fingerprint text-lg text-blue-600"></i>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="aadhaarInput" 
+                    name="aadhaarNumber" 
+                    maxlength="12" 
+                    placeholder="e.g. 855080270013" 
+                    autocomplete="off"
+                    class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl text-slate-900 font-mono text-lg font-bold tracking-widest focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all placeholder:text-slate-400 placeholder:font-sans placeholder:tracking-normal placeholder:font-normal"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                  >
+                </div>
+                <p class="mt-2 text-xs text-slate-500 flex items-center gap-1.5">
+                  <i class="fa-solid fa-bolt text-blue-500"></i>
+                  Calls <strong>https://www.apicentre.in/api/aadhaar_to_pan?api_key=...&aadhaar_no=(AADHAAR NO)</strong> to fetch the PAN.
+                </p>
+              </div>
+
+              <!-- Quick Demo Data Pills for Testing -->
+              <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4">
+                <div class="text-xs font-bold text-amber-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <i class="fa-solid fa-flask text-amber-600"></i> Quick Sample Inputs for Testing:
+                </div>
+                <div class="flex flex-wrap gap-2" id="demoPillsContainer">
+                  <button type="button" onclick="fillDemoAadhaar('855080270013')" class="text-xs font-mono font-bold bg-white text-emerald-700 hover:text-emerald-900 hover:border-emerald-300 border border-emerald-300 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    855080270013 <span class="font-sans text-[10px] text-emerald-600">(Your Live Aadhaar)</span>
+                  </button>
+                  <button type="button" onclick="fillDemoPan('LVDPS5602R')" class="text-xs font-mono font-bold bg-white text-orange-700 hover:text-orange-900 hover:border-orange-300 border border-orange-300 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    LVDPS5602R <span class="font-sans text-[10px] text-orange-600">(Your Live PAN)</span>
+                  </button>
+                  <button type="button" onclick="fillDemoPan('ABCDE1234F')" class="text-xs font-mono font-bold bg-white text-slate-700 hover:text-orange-600 hover:border-orange-300 border border-amber-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    ABCDE1234F <span class="font-sans text-[10px] text-slate-400">(Manoj Kumar)</span>
+                  </button>
+                  <button type="button" onclick="fillDemoPan('BKRPN5562K')" class="text-xs font-mono font-bold bg-white text-slate-700 hover:text-orange-600 hover:border-orange-300 border border-amber-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    BKRPN5562K <span class="font-sans text-[10px] text-slate-400">(Rajesh Sharma)</span>
+                  </button>
+                  <button type="button" onclick="fillDemoAadhaar('335400206902')" class="text-xs font-mono font-bold bg-white text-blue-700 hover:text-blue-900 hover:border-blue-300 border border-blue-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    335400206902 <span class="font-sans text-[10px] text-blue-500">(API Centre Demo)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Terms & Agreement Checkbox -->
+              <div class="flex items-start gap-2.5">
+                <input type="checkbox" id="panConsent" required checked class="mt-1 w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500">
+                <label for="panConsent" class="text-xs text-slate-600">
+                  I confirm customer authorization for querying the linkage status. Tariff fee will be deducted upon successful verification.
+                </label>
+              </div>
+
+              <!-- Action Submit Button & History Link -->
+              <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                <button 
+                  type="submit" 
+                  id="panSubmitBtn" 
+                  class="w-full sm:w-auto flex-1 py-4 px-8 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 hover:from-orange-500 hover:to-amber-500 text-white font-extrabold text-base shadow-xl shadow-orange-600/25 hover:shadow-orange-600/40 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <span>Find Linked Aadhaar Number</span>
+                </button>
+                
+                <button type="button" onclick="openServiceHistoryModal('PAN_FIND')" class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-slate-900 text-white hover:bg-black font-bold text-sm transition-colors flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-clock-rotate-left text-yellow-400"></i>
+                  <span>History</span>
+                </button>
+
+                <button type="reset" onclick="resetPanResult()" class="w-full sm:w-auto px-5 py-4 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-100 font-semibold text-sm transition-colors">
+                  Reset
+                </button>
+              </div>
+            </form>
+
+            <!-- Loading Spinner State -->
+            <div id="panLoadingState" class="hidden mt-8 text-center py-10 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="inline-block relative">
+                <div class="w-16 h-16 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-orange-600 text-sm">
+                  <i class="fa-solid fa-bolt"></i>
+                </div>
+              </div>
+              <h4 class="mt-4 font-bold text-slate-800 text-lg">Querying Database via PHP API...</h4>
+              <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Extracting linkage record securely.</p>
+            </div>
+
+            <!-- RESULT DISPLAY CARD -->
+            <div id="panResultContainer" class="hidden mt-8 animate-fade-in">
+              <div class="bg-gradient-to-br from-emerald-50 via-teal-50 to-white rounded-3xl border-2 border-emerald-300 p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-emerald-200 gap-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-lg shadow-emerald-600/30">
+                        <i class="fa-solid fa-check-double"></i>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-emerald-800">Status Confirmed</div>
+                        <h3 class="text-xl font-extrabold text-emerald-950 font-heading">Aadhaar Linked with PAN Successfully!</h3>
+                      </div>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <i class="fa-solid fa-circle-check text-emerald-600"></i> Active & Operative
+                    </span>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                    <div class="bg-white/80 backdrop-blur rounded-2xl p-4 border border-emerald-100 shadow-sm">
+                      <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">PAN Number</div>
+                      <div class="text-xl font-black font-mono text-slate-900 mt-1" id="resPanNumber">ABCDE1234F</div>
+                      <div class="text-xs text-slate-500 mt-0.5" id="resPanHolderName">Cardholder: Manoj Kumar</div>
+                    </div>
+
+                    <div class="bg-white/90 backdrop-blur rounded-2xl p-4 border-2 border-emerald-400 shadow-md">
+                      <div class="flex items-center justify-between">
+                        <div class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Linked Aadhaar Number</div>
+                        <button onclick="toggleAadhaarMask()" class="text-xs text-blue-600 hover:underline flex items-center gap-1 font-semibold">
+                          <i class="fa-solid fa-eye" id="maskToggleIcon"></i> <span id="maskToggleText">Show Full</span>
+                        </button>
+                      </div>
+                      <div class="text-2xl font-black font-mono text-emerald-700 tracking-wider mt-1 flex items-center justify-between">
+                        <span id="resAadhaarNumber">XXXX-XXXX-8921</span>
+                        <button onclick="copyToClipboard('resAadhaarNumber')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-300 font-sans font-medium flex items-center gap-1" title="Copy Aadhaar">
+                          <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                      </div>
+                      <div class="text-xs text-emerald-600 font-medium mt-0.5">UIDAI Verified Linkage</div>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur rounded-2xl p-4 border border-emerald-100 shadow-sm">
+                      <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Acknowledgement Ref</div>
+                      <div class="text-sm font-bold font-mono text-slate-800 mt-1" id="resPanAckRef">MS-PAN-98234</div>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur rounded-2xl p-4 border border-emerald-100 shadow-sm">
+                      <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Verification Date & Time</div>
+                      <div class="text-sm font-bold text-slate-800 mt-1" id="resPanTimestamp">12 Nov 2026, 20:05 IST</div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <button onclick="printPanSlip()" class="px-5 py-3 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-sm shadow-md transition-all flex items-center gap-2">
+                      <i class="fa-solid fa-print"></i> Print Official Slip / Receipt
+                    </button>
+                    <button onclick="openServiceHistoryModal('PAN_FIND')" class="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm shadow transition-all flex items-center gap-2">
+                      <i class="fa-solid fa-clock-rotate-left"></i> View All PAN History
+                    </button>
+                    <button onclick="resetPanResult()" class="px-5 py-3 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 font-bold text-sm border border-emerald-300 transition-all flex items-center gap-2">
+                      <i class="fa-solid fa-rotate-left"></i> Find Another PAN
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. VOTER MOBILE LINK SERVICE VIEW          -->
+    <!-- ========================================== -->
+    <section id="view-voter-link" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        
+        <!-- Breadcrumb & Prominent HISTORY Button -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <button onclick="navigateTo('home')" class="text-sm font-semibold text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+          </button>
+          
+          <div class="flex items-center gap-3">
+            <!-- HISTORY BUTTON IN SERVICE -->
+            <button onclick="openServiceHistoryModal('VOTER_LINK')" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer border border-slate-700">
+              <i class="fa-solid fa-clock-rotate-left text-purple-300"></i>
+              <span>Service History</span>
+            </button>
+
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500">Wallet:</span>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200" id="voterServiceWalletBalance">₹500.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service Main Box -->
+        <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
+          <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 p-6 sm:p-8 text-white relative">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-3xl shadow-inner border border-white/20">
+                  <i class="fa-solid fa-mobile-screen-button text-purple-300"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold font-heading">VOTER MOBILE LINK</h2>
+                    <span class="bg-white/20 text-white text-[11px] font-bold px-2 py-0.5 rounded-md">ECI / NVSP API</span>
+                  </div>
+                  <p class="text-purple-100 text-sm mt-1">Verify if Mobile Number is linked with Voter ID (EPIC)</p>
+                </div>
+              </div>
+              <div class="text-right sm:border-l sm:border-white/20 sm:pl-6">
+                <div class="text-xs text-purple-200 uppercase font-semibold">Service Charge</div>
+                <div class="text-2xl font-black font-heading text-white" id="voterBannerFee">₹10.00</div>
+                <div class="text-[10px] text-purple-200">Per Verification</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Area -->
+          <div class="p-6 sm:p-8">
+            <form id="voterLinkForm" onsubmit="handleVoterLinkSubmit(event)" class="space-y-6">
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label for="voterInput" class="block text-sm font-bold text-slate-800 mb-2">
+                    Voter ID Number (EPIC No.) <span class="text-red-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                      <i class="fa-solid fa-address-card text-lg"></i>
+                    </div>
+                    <input 
+                      type="text" 
+                      id="voterInput" 
+                      name="voterNumber" 
+                      placeholder="e.g. WBF1234567" 
+                      required 
+                      autocomplete="off"
+                      class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl text-slate-900 font-mono text-base font-bold uppercase focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 focus:outline-none transition-all placeholder:text-slate-400 placeholder:normal-case placeholder:font-sans placeholder:font-normal"
+                      oninput="this.value = this.value.toUpperCase();"
+                    >
+                  </div>
+                </div>
+
+                <div>
+                  <label for="mobileInput" class="block text-sm font-bold text-slate-800 mb-2">
+                    Mobile Number to Check <span class="text-red-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                      <span class="text-xs font-bold font-mono text-slate-500">+91</span>
+                    </div>
+                    <input 
+                      type="tel" 
+                      id="mobileInput" 
+                      name="mobileNumber" 
+                      maxlength="10" 
+                      pattern="[6-9][0-9]{9}" 
+                      placeholder="e.g. 9876543210" 
+                      required 
+                      autocomplete="off"
+                      class="w-full pl-14 pr-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl text-slate-900 font-mono text-base font-bold focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 focus:outline-none transition-all placeholder:text-slate-400 placeholder:font-sans placeholder:font-normal"
+                      oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Demo Pills -->
+              <div class="bg-purple-50/70 border border-purple-200/80 rounded-2xl p-4">
+                <div class="text-xs font-bold text-purple-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <i class="fa-solid fa-flask text-purple-600"></i> Sample Voter IDs for Testing:
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" onclick="fillDemoVoter('WBF1234567', '9876543210')" class="text-xs font-mono font-bold bg-white text-slate-700 hover:text-purple-600 hover:border-purple-300 border border-purple-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    WBF1234567 • 9876543210 <span class="font-sans text-[10px] text-emerald-600 font-bold">(Linked)</span>
+                  </button>
+                  <button type="button" onclick="fillDemoVoter('DL24089123', '9988776655')" class="text-xs font-mono font-bold bg-white text-slate-700 hover:text-amber-600 hover:border-amber-300 border border-purple-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    DL24089123 • 9988776655 <span class="font-sans text-[10px] text-red-600 font-bold">(Not Linked)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-2.5">
+                <input type="checkbox" id="voterConsent" required checked class="mt-1 w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500">
+                <label for="voterConsent" class="text-xs text-slate-600">
+                  I agree to verify voter mobile linkage status from electoral roll records. Tariff fee will be deducted upon query completion.
+                </label>
+              </div>
+
+              <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                <button 
+                  type="submit" 
+                  id="voterSubmitBtn" 
+                  class="w-full sm:w-auto flex-1 py-4 px-8 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-base shadow-xl shadow-purple-600/25 hover:shadow-purple-600/40 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <i class="fa-solid fa-paper-plane"></i>
+                  <span>Submit & Check Link Status</span>
+                </button>
+
+                <!-- Prominent HISTORY Button -->
+                <button type="button" onclick="openServiceHistoryModal('VOTER_LINK')" class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-slate-900 text-white hover:bg-black font-bold text-sm transition-colors flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-clock-rotate-left text-purple-300"></i>
+                  <span>History</span>
+                </button>
+
+                <button type="reset" onclick="resetVoterResult()" class="w-full sm:w-auto px-5 py-4 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-100 font-semibold text-sm transition-colors">
+                  Reset
+                </button>
+              </div>
+            </form>
+
+            <div id="voterLoadingState" class="hidden mt-8 text-center py-10 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="inline-block relative">
+                <div class="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-purple-600 text-sm">
+                  <i class="fa-solid fa-mobile-screen"></i>
+                </div>
+              </div>
+              <h4 class="mt-4 font-bold text-slate-800 text-lg">Querying Election Commission Roll via PHP API...</h4>
+            </div>
+
+            <div id="voterResultContainer" class="hidden mt-8 animate-fade-in">
+              <div id="voterResultContent"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. WALLET & TOP-UP REQUEST VIEW (USER)     -->
+    <!-- ========================================== -->
+    <section id="view-wallet" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">Billing & Balance</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading mt-2">Wallet & Top-up Request</h2>
+            <p class="text-slate-500 text-sm mt-1">Submit wallet recharge requests to Admin, check balance, and review transactions</p>
+          </div>
+          <button onclick="scrollToTopupForm()" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-plus-circle"></i> Request Wallet Top-up
+          </button>
+        </div>
+
+        <!-- Wallet Balance Card -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="md:col-span-2 bg-gradient-to-tr from-slate-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
+            <div class="relative z-10 flex flex-col justify-between h-full">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">Prepaid User Wallet</span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+                  </span>
+                </div>
+                <div class="mt-4">
+                  <div class="text-xs text-slate-400">Available Balance</div>
+                  <div class="text-4xl sm:text-5xl font-black font-heading text-white tracking-tight mt-1 flex items-baseline gap-2">
+                    <span id="walletMainBalance">₹500.00</span>
+                    <span class="text-xs font-semibold text-emerald-400">INR</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-8 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <div class="text-[11px] text-slate-400 uppercase font-semibold">Account Holder</div>
+                  <div class="text-sm font-bold text-slate-200" id="walletHolderName">Manoj Kumar</div>
+                </div>
+                <div>
+                  <div class="text-[11px] text-slate-400 uppercase font-semibold">User Role</div>
+                  <div class="text-sm font-bold text-yellow-300 uppercase" id="walletHolderRole">USER</div>
+                </div>
+                <button onclick="scrollToTopupForm()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Top-up Request
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <h3 class="font-bold text-slate-900 font-heading text-base flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-tag text-blue-600"></i> Service Tariff Rates
+              </h3>
+              <div class="space-y-3">
+                <div class="p-3 bg-orange-50/60 rounded-xl border border-orange-100 flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold text-slate-800">PAN Find (Aadhaar)</div>
+                    <div class="text-[10px] text-slate-500">Per search deduction</div>
+                  </div>
+                  <span class="font-black text-orange-600 text-sm font-mono" id="tariffPanDisplay">₹15.00</span>
+                </div>
+                <div class="p-3 bg-purple-50/60 rounded-xl border border-purple-100 flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold text-slate-800">Voter Mobile Link</div>
+                    <div class="text-[10px] text-slate-500">Per check deduction</div>
+                  </div>
+                  <span class="font-black text-purple-600 text-sm font-mono" id="tariffVoterDisplay">₹10.00</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-slate-100">
+              <button onclick="resetWalletDemo()" class="text-[11px] text-slate-400 hover:text-red-600 underline transition-colors">
+                Reset Demo Balance to ₹500
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- USER WALLET TOP UP REQUEST FORM -->
+        <div id="userTopupFormSection" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 font-heading flex items-center gap-2">
+                <i class="fa-solid fa-money-bill-transfer text-emerald-600"></i> Submit Wallet Top-up Request
+              </h3>
+              <p class="text-xs text-slate-500">Pay via UPI QR and enter transaction UTR reference. Admin will verify and approve.</p>
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 bg-yellow-50 text-yellow-800 border border-yellow-200 rounded-lg">Admin Verified</span>
+          </div>
+
+          <form onsubmit="handleUserTopupRequest(event)" class="space-y-5">
+            <!-- Quick Amount Pills -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Select Quick Amount or Enter Below</label>
+              <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                <button type="button" onclick="selectTopupAmount(100)" class="topup-pill py-2.5 px-2 rounded-xl border-2 border-slate-200 text-center font-bold text-xs text-slate-800">₹100</button>
+                <button type="button" onclick="selectTopupAmount(200)" class="topup-pill py-2.5 px-2 rounded-xl border-2 border-slate-200 text-center font-bold text-xs text-slate-800">₹200</button>
+                <button type="button" onclick="selectTopupAmount(500)" class="topup-pill active py-2.5 px-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-center font-bold text-xs text-emerald-800">₹500</button>
+                <button type="button" onclick="selectTopupAmount(1000)" class="topup-pill py-2.5 px-2 rounded-xl border-2 border-slate-200 text-center font-bold text-xs text-slate-800">₹1,000</button>
+                <button type="button" onclick="selectTopupAmount(2000)" class="topup-pill py-2.5 px-2 rounded-xl border-2 border-slate-200 text-center font-bold text-xs text-slate-800">₹2,000</button>
+                <button type="button" onclick="selectTopupAmount(5000)" class="topup-pill py-2.5 px-2 rounded-xl border-2 border-slate-200 text-center font-bold text-xs text-slate-800">₹5,000</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Top-up Amount (₹) <span class="text-red-500">*</span></label>
+                <input type="number" id="userTopupAmountInput" value="500" min="10" required class="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-xl font-bold text-slate-800 focus:bg-white focus:border-emerald-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Payment Method</label>
+                <select id="userTopupMethodSelect" class="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-xl font-semibold text-slate-800 focus:bg-white focus:border-emerald-500 focus:outline-none">
+                  <option value="UPI">⚡ UPI (PhonePe / GPay / Paytm)</option>
+                  <option value="QR">📱 Dynamic UPI QR</option>
+                  <option value="IMPS">🏦 IMPS / Bank Transfer</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">UTR / UPI Ref Number <span class="text-red-500">*</span></label>
+                <input type="text" id="userTopupUtrInput" placeholder="e.g. 432190823412" required class="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-xl font-mono font-bold text-slate-800 focus:bg-white focus:border-emerald-500 focus:outline-none">
+              </div>
+            </div>
+
+            <!-- UPI Details Box -->
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center text-lg">
+                  <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-slate-500">Official Portal UPI ID for Payment:</div>
+                  <div class="font-mono font-bold text-slate-900" id="officialUpiIdDisplay">manoj.services@upi</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="copyToClipboard('officialUpiIdDisplay')" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-white">
+                  Copy UPI ID
+                </button>
+                <button type="button" onclick="executeInstantDemoCredit()" class="px-3 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold">
+                  ⚡ 1-Click Test Credit (Demo)
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> Submit Top-up Request to Admin
+            </button>
+          </form>
+
+          <!-- User's Submitted Top-up Requests Table -->
+          <div class="mt-8 pt-6 border-t border-slate-100">
+            <h4 class="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-blue-600"></i> Your Submitted Top-up Requests Status
+            </h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-semibold">
+                  <tr>
+                    <th class="px-3 py-2 rounded-l-lg">Req ID</th>
+                    <th class="px-3 py-2">Amount</th>
+                    <th class="px-3 py-2">Method / UTR</th>
+                    <th class="px-3 py-2">Submitted</th>
+                    <th class="px-3 py-2 rounded-r-lg text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="userTopupRequestsTableBody" class="divide-y divide-slate-100">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transactions Passbook Table -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 font-heading flex items-center gap-2">
+                <i class="fa-solid fa-receipt text-blue-600"></i> Wallet Passbook & Transaction Ledger
+              </h3>
+              <p class="text-xs text-slate-500">Audited statement of service deductions and credits</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="filterTransactions('ALL')" class="txn-filter-btn active text-xs font-bold px-3 py-1.5 rounded-lg bg-blue-600 text-white" data-filter="ALL">All</button>
+              <button onclick="filterTransactions('CREDIT')" class="txn-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="CREDIT">Credits</button>
+              <button onclick="filterTransactions('DEBIT')" class="txn-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="DEBIT">Debits</button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-100">
+                <tr>
+                  <th class="px-4 py-3 rounded-l-xl">Txn ID</th>
+                  <th class="px-4 py-3">Description</th>
+                  <th class="px-4 py-3">Date & Time</th>
+                  <th class="px-4 py-3">Amount</th>
+                  <th class="px-4 py-3">Closing Balance</th>
+                  <th class="px-4 py-3 rounded-r-xl text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody id="walletTxnTableBody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. USER MODIFY PROFILE VIEW                -->
+    <!-- ========================================== -->
+    <section id="view-profile" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        
+        <div class="mb-8">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Operator Account</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading mt-2">Modify Your Profile</h2>
+          <p class="text-slate-500 text-sm mt-1">Update your kiosk name, contact information, and operating address</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Profile Badge Left Card -->
+          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center flex flex-col items-center">
+            <div class="relative mb-4">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-4xl font-extrabold shadow-lg shadow-blue-500/25 border-4 border-white" id="profileAvatarBig">
+                MK
+              </div>
+              <div class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-500 text-white border-2 border-white flex items-center justify-center text-xs">
+                <i class="fa-solid fa-check"></i>
+              </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-900 font-heading" id="profileDisplayName">Manoj Kumar</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5" id="profileDisplayRole">Authorized VLE & Center Manager</p>
+            <div class="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <i class="fa-solid fa-shield-check"></i> KYC Verified
+            </div>
+
+            <div class="w-full mt-6 pt-6 border-t border-slate-100 text-left space-y-3 text-xs">
+              <div>
+                <span class="text-slate-400">Username:</span>
+                <span class="font-mono font-bold text-slate-800 ml-1" id="profileDisplayUsername">manoj</span>
+              </div>
+              <div>
+                <span class="text-slate-400">Agent VLE ID:</span>
+                <span class="font-mono font-bold text-slate-800 ml-1" id="profileDisplayVle">MS-IND-2024-8842</span>
+              </div>
+              <div>
+                <span class="text-slate-400">Current Wallet:</span>
+                <span class="font-bold text-emerald-600 ml-1" id="profileWalletDisplay">₹500.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Modify Form Right Panel -->
+          <div class="md:col-span-2">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+              <h3 class="text-lg font-bold text-slate-900 font-heading mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-user-pen text-blue-600"></i> Update Profile Details
+              </h3>
+
+              <form onsubmit="handleUserModifyProfile(event)" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Full Name</label>
+                  <input type="text" id="userModName" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Shop / Center Name</label>
+                  <input type="text" id="userModShop" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Phone Number</label>
+                    <input type="tel" id="userModPhone" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Email Address</label>
+                    <input type="email" id="userModEmail" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Kiosk Operating Address</label>
+                  <textarea id="userModAddress" rows="2" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-3">
+                  <button type="submit" class="w-full py-3 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Profile Modifications
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. ADMIN PANEL VIEWS                       -->
+    <!-- ========================================== -->
+
+    <!-- ADMIN VIEW 1: DASHBOARD OVERVIEW -->
+    <section id="view-admin-dashboard" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-red-600 bg-red-50 px-2.5 py-1 rounded-md">Control Center</span>
+            <h2 class="text-3xl font-extrabold text-slate-900 font-heading mt-2">Administrator Dashboard</h2>
+            <p class="text-slate-500 text-sm mt-1">Full control over users, wallet credits, topup approvals, profile correction, and API settings</p>
+          </div>
+          <button onclick="openCreateUserModal()" class="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-user-plus"></i> + Create New User
+          </button>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+            <div class="text-3xl font-black text-blue-600 font-heading" id="adminTotalUsersCount">2</div>
+            <div class="text-xs text-slate-500 mt-1 font-semibold">Registered Users</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+            <div class="text-3xl font-black text-emerald-600 font-heading" id="adminTotalWalletCount">₹1,000.00</div>
+            <div class="text-xs text-slate-500 mt-1 font-semibold">Total User Balances</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+            <div class="text-3xl font-black text-amber-500 font-heading" id="adminPendingTopupsCount">0</div>
+            <div class="text-xs text-slate-500 mt-1 font-semibold">Pending Topup Requests</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+            <div class="text-3xl font-black text-purple-600 font-heading" id="adminTotalQueriesCount">0</div>
+            <div class="text-xs text-slate-500 mt-1 font-semibold">Total Services Executed</div>
+          </div>
+        </div>
+
+        <!-- Quick Admin Action Tiles -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div onclick="navigateTo('admin-users')" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-blue-400 hover:shadow-xl transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 font-heading group-hover:text-blue-600">Create & Delete Users</h3>
+            <p class="text-xs text-slate-500 mt-1">Add new operator accounts, assign initial funds, or remove users.</p>
+          </div>
+
+          <div onclick="navigateTo('admin-wallet')" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-emerald-400 hover:shadow-xl transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-hand-holding-dollar"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 font-heading group-hover:text-emerald-600">Add Money & Requests</h3>
+            <p class="text-xs text-slate-500 mt-1">Directly credit user wallets, and review/approve pending top-up requests.</p>
+          </div>
+
+          <div onclick="navigateTo('admin-api')" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-purple-400 hover:shadow-xl transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 font-heading group-hover:text-purple-600">Add API Changes</h3>
+            <p class="text-xs text-slate-500 mt-1">Update primary API Key, endpoints, tariff charges, and UPI credentials.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN VIEW 2: MANAGE USERS (CREATE, DELETE, PROFILE CORRECTION) -->
+    <section id="view-admin-users" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <button onclick="navigateTo('admin-dashboard')" class="text-xs font-semibold text-slate-500 hover:text-blue-600 mb-1 flex items-center gap-1">
+              <i class="fa-solid fa-arrow-left"></i> Back to Admin Dashboard
+            </button>
+            <h2 class="text-2xl font-extrabold text-slate-900 font-heading">User Management (Create & Delete Users)</h2>
+          </div>
+          <button onclick="openCreateUserModal()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow flex items-center gap-2">
+            <i class="fa-solid fa-user-plus"></i> + Create User
+          </button>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3 rounded-l-xl">ID</th>
+                  <th class="px-4 py-3">User & Shop</th>
+                  <th class="px-4 py-3">Role</th>
+                  <th class="px-4 py-3">Phone & Email</th>
+                  <th class="px-4 py-3">Wallet</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3 rounded-r-xl text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN VIEW 3: ADD MONEY & TOPUP APPROVALS -->
+    <section id="view-admin-wallet" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="mb-6">
+          <button onclick="navigateTo('admin-dashboard')" class="text-xs font-semibold text-slate-500 hover:text-blue-600 mb-1 flex items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to Admin Dashboard
+          </button>
+          <h2 class="text-2xl font-extrabold text-slate-900 font-heading">Add Money & Top-up Request Approvals</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <!-- Direct Admin Add Money Box -->
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <h3 class="text-base font-bold text-slate-900 font-heading mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-hand-holding-dollar text-emerald-600"></i> Direct Add Money to User
+            </h3>
+            <form onsubmit="handleAdminDirectAddMoney(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Select User</label>
+                <select id="adminAddMoneyUserSelect" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Amount (₹)</label>
+                <input type="number" id="adminAddMoneyAmountInput" value="500" min="1" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Credit Note / Reason</label>
+                <input type="text" id="adminAddMoneyNoteInput" value="Admin Manual Credit" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
+              </div>
+              <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow">
+                + Add Money Now
+              </button>
+            </form>
+          </div>
+
+          <!-- Pending Top-up Requests from Users -->
+          <div class="md:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold text-slate-900 font-heading flex items-center gap-2">
+                <i class="fa-solid fa-bell text-amber-500"></i> User Top-up Requests (Approve / Reject)
+              </h3>
+              <button onclick="loadAdminTopupRequests()" class="text-xs text-blue-600 hover:underline font-bold">
+                <i class="fa-solid fa-rotate"></i> Refresh
+              </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-semibold">
+                  <tr>
+                    <th class="px-3 py-2 rounded-l-lg">Req ID</th>
+                    <th class="px-3 py-2">User</th>
+                    <th class="px-3 py-2">Amount</th>
+                    <th class="px-3 py-2">UTR Ref</th>
+                    <th class="px-3 py-2">Status</th>
+                    <th class="px-3 py-2 rounded-r-lg text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adminTopupRequestsTableBody" class="divide-y divide-slate-100">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN VIEW 4: ADD API CHANGES -->
+    <section id="view-admin-api" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <div class="mb-6">
+          <button onclick="navigateTo('admin-dashboard')" class="text-xs font-semibold text-slate-500 hover:text-blue-600 mb-1 flex items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to Admin Dashboard
+          </button>
+          <h2 class="text-2xl font-extrabold text-slate-900 font-heading">Add API Changes & Gateway Settings</h2>
+          <p class="text-xs text-slate-500">Configure apicentre.in API Key, domain, service tariff fees, and official UPI ID</p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+          <form onsubmit="handleAdminSaveApiSettings(event)" class="space-y-6">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Primary API Key (apicentre.in) <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="adminApiKeyInput" 
+                  value="b848a41feea7e111141f76500ada5ff756d2d882a3de1348747a8803398c" 
+                  required 
+                  class="w-full p-3 font-mono text-sm bg-slate-50 border-2 border-slate-200 rounded-xl font-bold text-slate-800 focus:bg-white focus:border-purple-500 focus:outline-none"
+                >
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">This key is used in all background cURL queries for Aadhaar to PAN and Voter Mobile Link.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">API Base Domain</label>
+                <input 
+                  type="url" 
+                  id="adminApiDomainInput" 
+                  value="https://www.apicentre.in" 
+                  required 
+                  class="w-full p-3 font-mono text-sm bg-slate-50 border-2 border-slate-200 rounded-xl font-bold text-slate-800 focus:bg-white focus:border-purple-500 focus:outline-none"
+                >
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Official UPI ID (for Top-ups)</label>
+                <input 
+                  type="text" 
+                  id="adminUpiIdInput" 
+                  value="manoj.services@upi" 
+                  required 
+                  class="w-full p-3 font-mono text-sm bg-slate-50 border-2 border-slate-200 rounded-xl font-bold text-slate-800 focus:bg-white focus:border-purple-500 focus:outline-none"
+                >
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">PAN Find Tariff Fee (₹)</label>
+                <input 
+                  type="number" 
+                  step="0.5" 
+                  id="adminFeePanInput" 
+                  value="15.00" 
+                  required 
+                  class="w-full p-3 font-bold text-sm bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 focus:bg-white focus:border-purple-500 focus:outline-none"
+                >
+                <p class="text-[10px] text-slate-400 mt-0.5">Deducted from user wallet per successful PAN find.</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Voter Mobile Link Tariff Fee (₹)</label>
+                <input 
+                  type="number" 
+                  step="0.5" 
+                  id="adminFeeVoterInput" 
+                  value="10.00" 
+                  required 
+                  class="w-full p-3 font-bold text-sm bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-800 focus:bg-white focus:border-purple-500 focus:outline-none"
+                >
+                <p class="text-[10px] text-slate-400 mt-0.5">Deducted from user wallet per voter mobile check.</p>
+              </div>
+            </div>
+
+            <div class="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+              <button type="button" onclick="testLiveApiConnection()" class="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-network-wired text-purple-600"></i> Ping / Test API
+              </button>
+              <button type="submit" class="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> Save API Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 7. ABOUT US VIEW                           -->
+    <!-- ========================================== -->
+    <section id="view-about" class="page-view hidden animate-fade-in py-10">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Who We Are</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 font-heading mt-3">About MANOJ SERVICES</h2>
+          <p class="text-slate-600 text-base mt-2 leading-relaxed">
+            Leading digital facilitation center committed to empowering citizens, cyber cafes, and kiosk operators with lightning-fast identity verification and citizen utility services.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <div class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white rounded-3xl p-8 shadow-xl">
+            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl text-yellow-300 mb-5">
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <h3 class="text-2xl font-bold font-heading mb-3">Our Mission</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              At <strong>MANOJ SERVICES</strong>, our goal is to eliminate bureaucratic delays. We provide seamless access for operators to find linked Aadhaar numbers from PAN records, verify Voter ID mobile linkage, and generate instant, verifiable customer receipts.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl mb-5">
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <h3 class="text-2xl font-bold font-heading text-slate-900 mb-3">Why Operators Choose Us</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+              We understand the everyday challenges faced at local kiosks. Our platform guarantees high uptime, zero deduction on failed lookups, and fast wallet top-ups.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: LOGIN / SWITCH ROLE MODAL           -->
+  <!-- ========================================== -->
+  <div id="loginModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+      <div class="p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-right-to-bracket text-yellow-300"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold font-heading">Portal Login / Switch Account</h3>
+            <p class="text-xs text-slate-300">Select Role: Admin or User</p>
+          </div>
+        </div>
+        <button onclick="closeLoginModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <!-- 1-Click Fast Login Buttons (Requested by User) -->
+        <div class="space-y-2.5">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-500">1-Click Fast Demo Login:</div>
+          
+          <button type="button" onclick="quickLogin('admin', 'admin123')" class="w-full p-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold text-sm shadow-md flex items-center justify-between group transition-all">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-base"><i class="fa-solid fa-crown text-yellow-300"></i></span>
+              <div class="text-left">
+                <div class="font-extrabold text-sm">👑 Login as ADMIN</div>
+                <div class="text-[10px] text-red-100">Full Access: Users, Money, API Changes</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+          </button>
+
+          <button type="button" onclick="quickLogin('manoj', 'user123')" class="w-full p-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold text-sm shadow-md flex items-center justify-between group transition-all">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-base"><i class="fa-solid fa-user"></i></span>
+              <div class="text-left">
+                <div class="font-extrabold text-sm">👤 Login as USER (Manoj)</div>
+                <div class="text-[10px] text-blue-100">Use Services, Top-up Request, Modify Profile</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+          </button>
+
+          <button type="button" onclick="quickLogin('rajesh', 'user123')" class="w-full p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs flex items-center justify-between transition-colors">
+            <span>👤 Login as Secondary User (Rajesh)</span>
+            <span class="text-[10px] font-mono text-slate-400">user123</span>
+          </button>
+        </div>
+
+        <div class="relative flex items-center justify-center">
+          <div class="border-t border-slate-200 w-full"></div>
+          <span class="bg-white px-3 text-xs font-bold text-slate-400 uppercase">Or Custom Credentials</span>
+        </div>
+
+        <!-- Custom Credentials Form -->
+        <form onsubmit="handleManualLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Username or Email</label>
+            <input type="text" id="loginUsernameInput" required placeholder="admin or manoj" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:bg-white focus:border-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Password</label>
+            <input type="password" id="loginPasswordInput" required placeholder="••••••••" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:bg-white focus:border-blue-500 focus:outline-none">
+          </div>
+          <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-sm shadow">
+            Sign In to Portal
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: SERVICE HISTORY (PREVIOUSLY USED)   -->
+  <!-- ========================================== -->
+  <div id="serviceHistoryModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+      <div class="p-6 bg-slate-900 text-white flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500 text-slate-900 flex items-center justify-center text-xl font-bold">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold font-heading">Previously Used Services History</h3>
+            <p class="text-xs text-slate-400">View and reprint past PAN Find and Voter Mobile Link queries</p>
+          </div>
+        </div>
+        <button onclick="closeServiceHistoryModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Filters Strip -->
+      <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <button onclick="filterServiceHistory('ALL')" class="sh-filter-btn active text-xs font-bold px-3 py-1.5 rounded-lg bg-blue-600 text-white" data-type="ALL">All Services</button>
+          <button onclick="filterServiceHistory('PAN')" class="sh-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700" data-type="PAN">PAN Find</button>
+          <button onclick="filterServiceHistory('VOTER')" class="sh-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700" data-type="VOTER">Voter Mobile Link</button>
+        </div>
+        <div class="text-xs text-slate-500">
+          Showing: <strong id="shCountDisplay" class="text-slate-800">0</strong> records
+        </div>
+      </div>
+
+      <!-- History Table Body (Scrollable) -->
+      <div class="p-6 overflow-y-auto flex-grow">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200 sticky top-0">
+            <tr>
+              <th class="px-4 py-3 rounded-l-xl">Service</th>
+              <th class="px-4 py-3">Identifier (PAN / EPIC / Mobile)</th>
+              <th class="px-4 py-3">Result Status</th>
+              <th class="px-4 py-3">Fee</th>
+              <th class="px-4 py-3">Date & Time</th>
+              <th class="px-4 py-3 rounded-r-xl text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="serviceHistoryTableBody" class="divide-y divide-slate-100">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between flex-shrink-0">
+        <span class="text-xs text-slate-400">All queries are cryptographically stamped with receipt references.</span>
+        <button onclick="closeServiceHistoryModal()" class="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-black">
+          Close History
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADMIN CREATE USER                   -->
+  <!-- ========================================== -->
+  <div id="createUserModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+      <div class="p-6 bg-blue-600 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold font-heading">Create New Portal User</h3>
+            <p class="text-xs text-blue-100">Admin Account Creation</p>
+          </div>
+        </div>
+        <button onclick="closeCreateUserModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleAdminCreateUser(event)" class="p-6 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Username <span class="text-red-500">*</span></label>
+            <input type="text" id="newUsername" required placeholder="e.g. suresh" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Password <span class="text-red-500">*</span></label>
+            <input type="password" id="newPassword" required placeholder="••••••••" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Full Name <span class="text-red-500">*</span></label>
+          <input type="text" id="newName" required placeholder="e.g. Suresh Patel" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Shop / Center Name</label>
+          <input type="text" id="newShop" placeholder="e.g. Patel Digital Services" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Phone Number</label>
+            <input type="tel" id="newPhone" placeholder="+91 98000 00000" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Initial Wallet (₹)</label>
+            <input type="number" id="newBalance" value="500" min="0" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-emerald-700">
+          </div>
+        </div>
+        <div class="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+          <button type="button" onclick="closeCreateUserModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold">Cancel</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow">Create User Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADMIN PROFILE CORRECTION            -->
+  <!-- ========================================== -->
+  <div id="adminCorrectProfileModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+      <div class="p-6 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500 text-slate-900 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold font-heading">Admin Profile Correction</h3>
+            <p class="text-xs text-slate-400">Correct details for User ID: <span id="corrUserIdDisplay" class="font-bold text-yellow-300">#2</span></p>
+          </div>
+        </div>
+        <button onclick="closeAdminCorrectProfileModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleAdminSaveProfileCorrection(event)" class="p-6 space-y-4">
+        <input type="hidden" id="corrUserId">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Full Name</label>
+          <input type="text" id="corrName" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Shop / Kiosk Name</label>
+          <input type="text" id="corrShop" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Phone Number</label>
+            <input type="tel" id="corrPhone" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Email</label>
+            <input type="email" id="corrEmail" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Kiosk Address</label>
+          <textarea id="corrAddress" rows="2" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold"></textarea>
+        </div>
+        <div class="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+          <button type="button" onclick="closeAdminCorrectProfileModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold">Cancel</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm shadow">Save Profile Corrections</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PRINT RECEIPT TEMPLATE (FOR WINDOW.PRINT)  -->
+  <!-- ========================================== -->
+  <div id="printReceiptSection" class="print-only">
+    <div class="receipt-card">
+      <div class="receipt-header">
+        <div class="receipt-logo">
+          <h2>MANOJ SERVICES</h2>
+          <p>Authorized Digital Seva & Citizen Utility Center</p>
+        </div>
+        <div class="receipt-badge">OFFICIAL RECEIPT</div>
+      </div>
+
+      <div class="receipt-divider"></div>
+
+      <div class="receipt-info-grid">
+        <div><strong>Receipt / Ref No:</strong> <span id="printReceiptId">MS-REC-2026-9912</span></div>
+        <div><strong>Date & Time:</strong> <span id="printDate">12 Nov 2026, 20:05 IST</span></div>
+        <div><strong>Operator:</strong> <span id="printOperatorName">Manoj Kumar (VLE-8842)</span></div>
+        <div><strong>Center:</strong> <span id="printShopName">Manoj Services Digital Hub</span></div>
+      </div>
+
+      <div class="receipt-divider"></div>
+
+      <table class="receipt-table">
+        <thead>
+          <tr>
+            <th>Service Description</th>
+            <th>Search Identifier</th>
+            <th>Result Status</th>
+            <th style="text-align: right;">Fee Paid</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="printServiceName">PAN FIND (Linked Aadhaar)</td>
+            <td id="printIdentifier">ABCDE1234F</td>
+            <td id="printResult">XXXX-XXXX-8921 (Linked)</td>
+            <td style="text-align: right;" id="printAmount">₹15.00</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="receipt-total">
+        <span>Payment Mode: <strong>Manoj Services Prepaid Wallet</strong></span>
+        <span>Total Amount: <strong id="printTotalAmount">₹15.00 (PAID)</strong></span>
+      </div>
+
+      <div class="receipt-footer">
+        <p>This is a computer-generated slip provided by Manoj Services. Data verified from standard official registries.</p>
+        <p class="receipt-tagline">Thank You for using Manoj Services! • Helpline: +91 98765 43210</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
